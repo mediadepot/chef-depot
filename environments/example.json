@@ -1,0 +1,96 @@
+{
+  "name":"example",
+  "description":"Depot Environment",
+  "cookbook_versions":{},
+  "json_class":"Chef::Environment",
+  "chef_type":"environment",
+  "default_attributes":{
+    "depot":{
+      "user":"depot",
+      "group":"group",
+      "password":"depotd3p0!"
+    },
+    "duckdns":{
+      "_comment":"Only requred if OpenVPN is enabled",
+      "_comment":"Duckdns is a dynamic dns service. When your home network ip address changes, your duckdns domain will be updated.",
+      "token": "",
+      "domain":"depot"
+    },
+
+    "github":{
+      "_comment":"Only required if backup_library_config or openssh is installed",
+      "_comment":"You're api key  needs gist read/write access to store persistent data and/or read:public_key to associate your ssh key with the root and depot users",
+      "api_key": "",
+
+      "_comment":"This should be the id of your existing Depot created gist. When running the installer script, one will be creatd for you",
+      "id":""
+
+    },
+    "greyhole":{
+      "_comment":"before adding drives here, make sure they have been correctly added to fstab and formatted correctly.",
+      "mounted_drives":[
+        "/media/drive1",
+        "/media/drive2",
+        "/media/drive3",
+        "/media/drive4",
+        "/media/drive5",
+        "/media/drive6"
+      ]
+    },
+    "pushover":{
+      "_comment":"Pushover is used to send notifications regarding your server's status: downloads, software updates, outages, etc",
+      "userid":""
+
+    },
+
+
+    "_comment":"Applications managed by Depot:",
+    "backup_library_config":{
+      "enabled": true
+    },
+    "btsync":{
+      "enabled": false
+    },
+    "conky":{
+      "enabled": true
+    },
+    "couchpotato":{
+      "enabled": true
+    },
+    "deluge":{
+      "enabled": true
+    },
+    "headphones":{
+      "enabled": true
+    },
+    "plex":{
+      "enabled": true
+    },
+    "smart_monitoring":{
+      "enabled": true
+    },
+    "sickbeard":{
+      "enabled": true
+    },
+    "openssh":{
+      "enabled": true
+    },
+    "openvpn":{
+      "enabled": true
+    },
+    "popcorn_time":{
+      "enabled": true
+    },
+    "update_service":{
+      "enabled": true
+    },
+    "vnc":{
+      "enabled": true
+    }
+
+
+
+
+
+  }
+}

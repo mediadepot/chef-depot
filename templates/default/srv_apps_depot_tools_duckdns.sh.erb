@@ -1,0 +1,1 @@
+echo url="https://www.duckdns.org/update?domains=<%=@depot[:notify][:duckdns][:domain]%>&token=<%=@depot[:notify][:duckdns][:token]%>&ip=" | curl -k -o <%=@depot[:tools_dir]%>/duckdns.log -K -

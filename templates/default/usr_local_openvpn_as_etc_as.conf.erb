@@ -1,0 +1,121 @@
+# OpenVPN AS 1.1 configuration file
+#
+# Warning!!
+#  Any local changes may be overwritten. File is managed by Opscode Chef.
+#
+#
+# NOTE:  The ~ symbol used below expands to the directory that
+# the configuration file is saved in
+
+# remove for production
+# DEBUG=false
+
+# enable AS Connect functionality
+AS_CONNECT=true
+
+# temporary directory
+tmp_dir=~/tmp
+
+lic.dir=~/licenses
+
+# run_start retries
+run_start_retry.give_up=60
+run_start_retry.resample=10
+
+# enable client gateway
+sa.show_c2s_routes=true
+
+# certificates database
+certs_db=sqlite:///~/db/certs.db
+
+# user properties DB
+user_prop_db=sqlite:///~/db/userprop.db
+
+# configuration DB
+config_db=sqlite:///~/db/config.db
+
+# log DB
+log_db=sqlite:///~/db/log.db
+
+# wait this many seconds between failed retries
+db_retry.interval=1
+
+# how many retries to attempt before failing
+db_retry.n_attempts=6
+
+# On startup, wait up to n seconds for DB files to become
+# available if they do not yet exist.  This is generally
+# only useful on secondary nodes used for standby purposes.
+# db_startup_wait=
+
+# Node type: PRIMARY|SECONDARY.  Defaults to PRIMARY.
+# node_type=
+
+# bootstrap authentication via PAM -- allows
+# admin to log into web UI before authentication
+# system has been configured.  Configure PAM users
+# allowed to access via the bootstrap auth mechanism.
+boot_pam_service=openvpnas
+boot_pam_users.0=<%=@openvpn[:webui][:login]%>
+# boot_pam_users.1=
+# boot_pam_users.2=
+# boot_pam_users.3=
+# boot_pam_users.4=
+
+# System users that are allowed to access the server agent XML API.
+# The user that the web server will run as should be in this list.
+system_users_local.0=root
+system_users_local.1=openvpn_as
+
+# The user/group that the web server will run as
+cs.user=openvpn_as
+cs.group=openvpn_as
+
+# socket directory
+general.sock_dir=~/sock
+
+# path to linux openvpn executable
+# if undefined, find openvpn on the PATH
+#general.openvpn_exe_path=
+
+# source directory for OpenVPN Windows executable
+# (Must have been built with MultiFileExtract)
+sa.win_exe_dir=~/exe
+
+# The company name will be shown in the UI
+sa.company_name=OpenVPN Technologies, Inc.
+
+# server agent socket
+sa.sock=~/sock/sagent
+
+# If enabled, automatically generate a client configuration
+# when a client logs into the site and successfully authenticates
+cs.auto_generate=true
+
+# files for web server (PEM format)
+cs.ca_bundle=~/web-ssl/ca.crt
+cs.priv_key=~/web-ssl/server.key
+cs.cert=~/web-ssl/server.crt
+
+# web server will use three consecutive ports starting at this
+# address, for use with the OpenVPN port share feature
+cs.dynamic_port_base=870
+
+# which service groups should be started during
+# server agent initialization
+sa.initial_run_groups.0=web_group
+#sa.initial_run_groups.1=openvpn_group
+
+# use this twisted reactor
+sa.reactor=epoll
+
+# The unit number of this particular AS configuration.
+# Normally set to 0.  If you have multiple, independent AS instances
+# running on the same machine, each should have a unique unit number.
+sa.unit=0
+
+# If true, open up web ports on the firewall using iptables
+iptables.web=true
+
+vpn.server.user=openvpn_as
+vpn.server.group=openvpn_as

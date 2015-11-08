@@ -1,0 +1,151 @@
+# Conky configuration file.
+#
+# Warning!!
+#  Any local changes may be overwritten. File is managed by Opscode Chef.
+#
+# set to yes if you want Conky to be forked in the background
+background yes
+
+# Use Xft?
+use_xft yes
+
+# Xft font when Xft is enabled
+#xftfont Trebuchet MS:size=10
+xftfont Sans:size=8
+
+# Text alpha when using Xft
+xftalpha 1
+
+# Update interval in seconds
+update_interval 1.0
+
+# This is the number of times Conky will update before quitting.
+# Set to zero to run forever.
+total_run_times 0
+
+own_window yes
+own_window_transparent yes
+#own_window_type override
+own_window_type normal
+#own_window_type normal #use this if you want a nice shadow to appear around conky
+
+# If own_window is yes, these window manager hints may be used
+own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
+
+# Use double buffering (reduces flicker, may not work for everyone)
+double_buffer yes
+
+# Minimum size of text area
+minimum_size 200 200
+
+# Maximum width
+maximum_width 220
+
+# Draw shades?
+draw_shades yes
+
+# Draw outlines?
+draw_outline no
+
+# Draw borders around text
+draw_borders no
+
+# Draw borders around graphs
+draw_graph_borders yes
+
+# Stippled borders?
+stippled_borders 8
+
+# border margins
+border_margin 6
+
+# border width
+# border_width 1
+
+# Default colors and also border colors
+default_color white
+default_shade_color black
+default_outline_color white
+
+# Text alignment, other possible values are commented
+#alignment top_left
+alignment top_right
+#alignment bottom_left
+#alignment bottom_right
+#alignment none
+
+# Gap between borders of screen and text
+# same thing as passing -x at command line
+gap_x 12
+gap_y 12
+
+# Subtract file system buffers from used memory?
+no_buffers yes
+
+# set to yes if you want all text to be in uppercase
+uppercase no
+
+# number of cpu samples to average
+# set to 1 to disable averaging
+cpu_avg_samples 2
+
+# Force UTF8? note that UTF8 support required XFT
+override_utf8_locale yes
+
+##############################################
+##############################################
+
+TEXT
+${color 666666}SYSTEM INFO${color} ${color 666666}${hr}${color}
+Ubuntu  ${alignr}13.10
+Uptime:$alignr$uptime
+
+${color 666666}${font sans-serif:normal:size=8}TIME AND DATE${color} ${color 666666}${hr}
+${alignc}${font Arial Black:size:24}${color CCCCCC}${time %H:%M}${color}${font}
+${alignc}${color CCCCCC}${Time %A %m %d %Y}${color}
+
+${color 666666}PROCESSOR${color} ${color 666666}${hr}${color}
+${font sans-serif:normal:size=8}${cpugraph cpuaverage}
+Temps:$alignr${exec sensors | grep "Core 0" | awk '{print $3}' | cut -c2-3}°C / ${exec sensors | grep "Core 1" | awk '{print $3}' | cut -c2-3}°C
+Frequency:$alignr${freq_g} Ghz
+Core1: ${cpu cpu1}% ${cpubar cpu1}
+Core2: ${cpu cpu2}% ${cpubar cpu2}
+Core3: ${cpu cpu3}% ${cpubar cpu3}
+Core4: ${cpu cpu4}% ${cpubar cpu4}
+
+${color 666666}MEMORY${color} ${color 666666}${hr}${color}
+${font sans-serif:normal:size=8}RAM $alignc $mem / $memmax $alignr $memperc%
+$membar
+${color 666666}DRIVE SPACE${color} ${color 666666}${hr}${color}
+${font sans-serif:normal:size=8}SSD $alignc ${fs_used /} / ${fs_size /} $alignr ${fs_used_perc /}%
+${fs_bar /}
+<% @depot[:mounted_drives].each_with_index do |drive, index| %>
+${font sans-serif:normal:size=8}Drive<%=index+1%> $alignc ${fs_used <%=drive%>} / ${fs_size <%=drive%>} $alignr ${fs_used_perc <%=drive%>}%
+${fs_bar <%=drive%>}
+<% end %>
+
+${color 666666}PROCESS${color} ${color 666666}${hr}${color}
+${color 666666}NAME${color} $alignr PID    CPU
+${top name 1} $alignr ${top pid 1} ${top cpu 1}
+${top name 2} $alignr ${top pid 2} ${top cpu 2}
+${top name 3} $alignr ${top pid 3} ${top cpu 3}
+${top name 4} $alignr ${top pid 4} ${top cpu 4}
+${top name 5} $alignr ${top pid 5} ${top cpu 5}
+
+${color 666666}NETWORK${color} ${color 666666}${hr}${color}${if_existing /proc/net/route eth0}
+
+ESSID: $alignr ${wireless_essid eth0}     ${color 666666}Ethernet$color
+IP address: $alignr ${addr eth0}
+External IP: $alignr ${execi 3600 curl http://myip.dnsomatic.com}
+Up: ${upspeed eth0} kb/s ${alignr}${upspeedgraph eth0 8,70 99CCFF 6666FF}
+Down: ${downspeed eth0} kb/s ${alignr}${downspeedgraph eth0 8,70 99CCFF 6666FF}
+Upload: ${alignr}${totalup eth0}
+Download: ${alignr}${totaldown eth0}
+${gw_ip}${else}${if_existing /proc/net/route wlan0}
+ESSID: $alignr ${wireless_essid wlan0}     ${color 666666}Wireless$color
+IP address: $alignr ${addr wlan0}
+Down: ${downspeed wlan0} kb/s ${alignr}${downspeedgraph wlan0 15,70 99CCFF 6666FF}
+Up: ${upspeed wlan0} kb/s ${alignr}${upspeedgraph wlan0 15,70 99CCFF 6666FF}
+
+
+

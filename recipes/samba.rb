@@ -1,3 +1,10 @@
+#
+# Cookbook Name:: depot
+# Recipe:: samba
+#
+# Copyright (C) 2015 Jason Kulatunga
+#
+
 #sourced from https://github.com/jtimberman/samba-cookbook
 
 node[:samba][:shares].each do |k,v|

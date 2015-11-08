@@ -1,0 +1,265 @@
+# Greyhole Configuration File
+#
+# Warning!!
+#  Any local changes may be overwritten. File is managed by Opscode Chef.
+#
+
+#### Database Connection ####
+# Available engines: mysql, sqlite
+# When choosing sqlite, 'db_host', 'db_user', 'db_pass' & 'db_name' options are not required, but 'db_path' is.
+
+	db_engine = mysql
+	db_host = localhost
+	db_user = <%= @greyhole[:db][:user] %>
+	db_pass = <%= @greyhole[:db][:password] %>
+	db_name = <%= @greyhole[:db][:name] %>
+
+#### Timezone ####
+# You can comment this out if you already define a `date.timezone` in your php.ini. Otherwise, this config option is mandatory.
+# See the list of allowed values here: http://www.php.net/manual/en/timezones.php
+
+    timezone = America/Montreal
+
+#### Email Recipient ####
+# Will receive email reports for daily fsck, or when all drives are out of
+# available space.
+# When specifying no @hostname, the email will be delivered to the local
+# mailbox of that user.
+
+	#email_to = root@test.com
+
+#### Greyhole Daemon Niceness ####
+# Niceness of the background daemon that handle most of the heavy lifting.
+# Number between -20 and 19.
+# The higher the number, the more 'nice' the daemon will be, i.e. the less
+# resources it will get, versus other processes with a lower niceness.
+
+#	daemon_niceness = 1
+
+#### Greyhole Log File ####
+# If you define a greyhole_error_log_file, WARNING, ERROR and CRITICAL logs will be written there, instead of using greyhole_log_file.
+# Notes:
+#   - greyhole_error_log_file will be ignored if greyhole_log_file = syslog.
+#   - you can't use syslog for greyhole_error_log_file and a normal file for greyhole_log_file.
+#   - if you use something else than /var/log/greyhole.*, you will want to change /etc/logrotate.d/greyhole accordingly.
+
+#	greyhole_log_file = syslog
+	greyhole_log_file = /var/log/greyhole.log
+#   greyhole_error_log_file = /var/log/greyhole.err
+
+# Available verbosity levels: DEBUG, INFO, WARN, ERROR
+# Note that for --status to work correctly, you'll need to keep this to DEBUG.
+
+	log_level = DEBUG
+
+# Log Greyhole memory usage on each log line?
+
+	log_memory_usage = no
+
+# Look for other processes working on files on the Greyhole shares?
+# Disable to get more speed, but this might break some files, if any
+# application change your files while Greyhole tries to work on them.
+
+	check_for_open_files = yes
+
+#### Shares Settings ####
+# Number of copies of each file you want Greyhole to keep, per Share.
+# This is not the number of duplicates! 2 copies = 1 duplicate
+# If you change one of those, you should run fsck manually, or wait for the
+# daily fsck, to have the additional copies created, or extra copies deleted.
+#
+# Example:
+#
+#	num_copies[Backups] = 2
+#	num_copies[CrashPlan] = 2
+#	num_copies[Games] = 2
+#	num_copies[Music] = 2
+#	num_copies[Photos] = max # This will insure those files are on all HDD
+#	num_copies[RecordedTV] = 1
+#	num_copies[Software] = 2
+#	num_copies[TimeMachine] = 1
+#	num_copies[Videos] = 2
+	num_copies[tvshows] = 1
+	num_copies[movies] = 1
+	num_copies[downloads] = 1
+
+#### Storage Pool ####
+# Where should the file copies be kept?
+# You probably want to list all your physical hard drives here.
+# Also specify how much free space you want to reserve on each drive. This is
+# a soft limit that will be ignored if the necessary hard drives are below
+# their minimum.
+# For example, if you specify a 100 GB limit on all drives, and only one still
+# have more than 100 GB of free space, and you save a new file on a share for
+# which you specified you want multiple copies, this drive will be used first,
+# but the other drives that have less free space will be used to store the
+# additional copies.
+#
+# Example:
+#
+<%@depot[:mounted_drives].each do |drive|%>
+	storage_pool_drive = <%=drive %>/gh, min_free: 10gb
+<% end %>
+
+# The following can help you test Greyhole by defining multiple storage_pool_drive
+# that are in fact just empty directories on the same drive.
+# WARNING! Do NOT enable that option when you're not testing Greyhole.
+# Doing so could result is lost data when a drive will fail.
+#
+#	allow_multiple_sp_per_device = no
+
+### Storage Drive Selection Groups ###
+# The groups you define here will be available to use in the
+# drive_selection_algorithm option(s) below.
+# The group names (OK, NEW, BROKEN, REMOTE in the example below) can be
+# anything you'd like.
+# Use one line per group, with the following syntax:
+#   group name: one or more (comma-separated) storage pool drives
+# If you ommit any storage pool drive from your groups, this drive
+# will NOT be used by Greyhole!
+#
+# See https://github.com/gboudreau/Greyhole/wiki/SuggestedStorageSelectionAlgorithmUsage
+#   on how we suggest you use this feature.
+
+	drive_selection_groups = OK: <%=@depot[:mounted_drives][0]%>/gh, <%=@depot[:mounted_drives][1]%>/gh
+	                         NEW: <%=@depot[:mounted_drives][2]%>/gh, <%=@depot[:mounted_drives][3]%>/gh
+
+# You can also define drive_selection_groups for specific shares:
+#
+#	drive_selection_groups[Photos] = SATA: /mnt/hdd0/gh
+#	                                 IDE: /mnt/hdd1/gh, /mnt/hdd2/gh
+#	                                 USB: /mnt/hdd3/gh
+
+#### Storage Drive Selection Algorithm ####
+# available algorithms: most_available_space, least_used_space
+#   most_available_space: use the drives with the most available space
+#     first, so that available space on all drives should become and stay
+#     balanced.
+#   least_used_space: use the drives with the least used space
+#     first, so that used space on all drives should become and stay
+#     balanced.
+
+	drive_selection_algorithm = most_available_space
+
+# If you defined drive_selection_groups above, you'll want to use them here.
+# Use the 'forced' keyword, then list the groups you want to use, in order, and
+# prefix each group name with the number of drives you want to use from
+# that group before using the next group.
+# Use the 'all' keyword to indicate you want Greyhole to use all drives
+# from a specific group before starting to use drives from the next group.
+# You'll need to indicate how Greyhole should pick drives within a group by
+# ending your line with either 'least_used_space' or 'most_available_space'.
+#
+#	drive_selection_algorithm = forced (1xOK, 1xNEW, 1xBROKEN, 1xREMOTE) most_available_space
+
+# You can also define drive_selection_algorithm for specific shares:
+#
+#	drive_selection_algorithm[Videos] = least_used_space
+#	drive_selection_algorithm[Photos] = forced (all SATA, 1xIDE, 1xUSB) most_available_space
+
+#### Sticky Files ####
+# Sticky files are files that will always 'live' together, in the storage pool.
+#
+# This will allow you to read (and read-only!) those files by using the
+# storage pool drives themselves, instead of using the mounted shares.
+# To see when that might be useful, read Issue #3 at the URL below.
+# [http://code.google.com/p/greyhole/issues/detail?id=3]
+#
+# Each sticky_files line should start with the name of a share, followed by a
+# directory inside that share.
+# One or more stick_into lines should follow each sticky_files line, if you
+# want the files to go on specific hard drive(s).
+# If you don't specify any stick_into, the drive with the most free space will
+# be use to hold your files together.
+
+	sticky_files = Music/
+
+#	sticky_files = Videos/Movies/
+#		stick_into = /mnt/hdd1/gh
+#		stick_into = /mnt/hdd5/gh
+
+# How long should free space calculations be cached (in seconds).
+# When selecting drives using their available / free space, the last cached
+# value will be used.
+# Use 0 to disable caching.
+
+	df_cache_time = 15
+
+#### Trash ####
+# Move deleted files to trash, instead of deleting them?
+# (Yes, trash is just another name for a Recycle Bin.)
+# You can specify per-share preferences that will override the global
+# preference.
+
+	delete_moves_to_trash = yes
+#	delete_moves_to_trash[CrashPlan] = no
+#	delete_moves_to_trash[TimeMachine] = no
+
+#### Frozen directories ####
+# Directories listed below will not be touched by Greyhole until the user
+# wants it to (greyhole --thaw=<dir>).
+#
+# This can be used to process often-updated files at regular intervals,
+# instead of having Greyhole process them as soon as they change.
+#
+# Each frozen_directory line should start with the name of a share, followed
+# by a directory inside that share.
+
+#	frozen_directory = Data/mysql
+
+#### Maximum Queued Tasks ####
+# Maximum number of queued tasks to store in MySQL/SQLite, when parsing the
+# spool directory. Use a lower number if you experience slowness while parsing
+# spooled operations.
+# Default is 10000000 when using MySQL, and 1000 when using SQLite.
+# Setting a value here will overwrite those defaults.
+
+#	max_queued_tasks = 10000000
+
+#### Memory Limit ###
+## Maximum amount of ram that Greyhole can consume while running
+## this can be higher than the global php.ini memory limit
+## if greyhole uses >95% of available memory while loading
+## data it will quit and throw an error in the logs
+# Default is 128M
+# Setting a value here will overwrite this default.
+# It is NOT advisable to lower the memory limit.
+	memory_limit = 2048M
+
+#### Copy Method ####
+# Possible values: cp, rsync
+# cp is less CPU-intensive, and generally faster than rsync, which is still
+# available for backward compatibility
+
+#	copy_method = cp
+
+#### Executed tasks retention ####
+# How long should executed tasks be kept in the database, after having been executed.
+# Those are strictly for debugging purposes; they serve no other purposes.
+# Enter a number of days, or 'forever' (no quotes).
+# The default is to keep 365 days.
+
+#	executed_tasks_retention = 365
+
+#### Ignored files & folders ####
+# Files that match the patterns below will be ignored by Greyhole.
+# They will stay in the landing zone indefinitely, so be careful on what you
+# define here. List here all files and folders that are temporary, to prevent
+# Greyhole from working for nothing.
+#
+# Format is Regular Expressions (PCRE syntax)
+#
+# ignored_files is matched against the file name only.
+# ignored_folders is matched against the concatenation of the share name and
+#   the full path to the file (without the filename), eg: Videos/Movies/HD
+
+    # rsync temporary files
+    ignored_files = \..*\.[0-9a-zA-Z]{6}
+    # Microsoft Office temporary files
+    ignored_files = [0-9A-F]{8}\.tmp
+    # CrashPlan (restore) temporary files
+    ignored_files = \.cprestoretmp.*
+    # SABnzbd temporary folders when extracting a download
+    ignored_folders = .*/_UNPACK_.*
+    # Windows thumbs database files
+    #ignored_files = Thumb.db

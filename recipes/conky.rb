@@ -1,3 +1,10 @@
+#
+# Cookbook Name:: depot
+# Recipe:: conky
+#
+# Copyright (C) 2015 Jason Kulatunga
+#
+
 package 'conky-all' do
   action :install
 end

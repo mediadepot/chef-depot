@@ -1,5 +1,13 @@
-#http://swupdate.openvpn.org/as/openvpn-as-2.0.10-Ubuntu14.amd_64.deb
+#
+# Cookbook Name:: depot
+# Recipe:: openvpn
+#
+# Copyright (C) 2015 Jason Kulatunga
+#
 
+include_recipe 'depot::duckdns'
+
+#http://swupdate.openvpn.org/as/openvpn-as-2.0.10-Ubuntu14.amd_64.deb
 remote_file "#{Chef::Config[:file_cache_path]}/openvpn-as-2.0.10-Ubuntu14.amd_64.deb" do
   source 'http://swupdate.openvpn.org/as/openvpn-as-2.0.10-Ubuntu14.amd_64.deb'
   mode 0644

@@ -1,3 +1,10 @@
+#
+# Cookbook Name:: depot
+# Recipe:: nginx
+#
+# Copyright (C) 2015 Jason Kulatunga
+#
+
 include_recipe 'nginx::source'
 
 nginx_sites = ['plex.nexus.local',

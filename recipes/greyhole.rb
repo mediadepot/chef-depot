@@ -1,3 +1,10 @@
+#
+# Cookbook Name:: depot
+# Recipe:: greyhole
+#
+# Copyright (C) 2015 Jason Kulatunga
+#
+
 #configuration via: https://raw.githubusercontent.com/gboudreau/Greyhole/master/USAGE
 
 apt_repository 'greyhole' do
@@ -65,6 +72,7 @@ template '/etc/init/greyhole_watcher.conf' do
   group 'root'
   variables({
                 :depot => node[:depot],
+                :pushover => node[:pushover],
                 :greyhole => node[:greyhole]
             })
   notifies :start, 'service[greyhole_watcher]',:immediately
@@ -111,6 +119,7 @@ template '/etc/init/mount_shares_locally.conf' do
   group 'root'
   variables({
                 :depot => node[:depot],
+                :pushover => node[:pushover],
                 :greyhole => node[:greyhole]
             })
   notifies :restart, 'service[mount_shares_locally]',:immediately

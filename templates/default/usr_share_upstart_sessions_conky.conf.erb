@@ -1,0 +1,20 @@
+#!upstart
+
+#
+# Warning!!
+#  Any local changes may be overwritten. File is managed by Opscode Chef.
+#
+
+start on starting xsession-init
+
+description "Conky"
+
+# Start job via the daemon control script. Replace "soham" with your username.
+exec /usr/bin/conky
+
+# Restart the process if it dies with a signal
+# or exit code not given by the 'normal exit' stanza.
+respawn
+
+# Give up if restart occurs 10 times in 30 seconds.
+respawn limit 15 30
