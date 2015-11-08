@@ -7,7 +7,7 @@
   "default_attributes":{
     "depot":{
       "user":"depot",
-      "group":"group",
+      "group":"depot",
       "password":"depotd3p0!"
     },
     "duckdns":{

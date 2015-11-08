@@ -24,7 +24,7 @@ include_recipe 'depot::samba'
 # package "libreadline-gplv2-dev"
 # package "libcurl4-openssl-dev"
 package('libmysqlclient-dev'){ action :nothing }.run_action(:install)
-chef_gem 'mysql'
+chef_gem 'mysql2'
 mysql_connection_info = {
     :host     => 'localhost',
     :username => 'root'
@@ -59,7 +59,7 @@ mysql_database node[:greyhole][:db][:name] do
       :username =>  node[:greyhole][:db][:user],
       :password => node[:greyhole][:db][:password]
   )
-  sql { ::File.open('/usr/share/greyhole/schema-mysql.sql').read }
+  sql lazy { ::File.open('/usr/share/greyhole/schema-mysql.sql').read }
   action :query
   not_if "mysql -u root -D greyhole -r -B -N -e \"SELECT * FROM settings\" | grep -q last_read_log_smbd_line"
 

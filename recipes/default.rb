@@ -50,6 +50,17 @@ template '/etc/profile.d/depot.sh' do
             })
 end
 
+#run apt-get update (required for most installs)
+execute "apt-get-update-periodic" do
+  command "apt-get update"
+  ignore_failure true
+  # only_if do
+  #   File.exists?('/var/lib/apt/periodic/update-success-stamp') &&
+  #       File.mtime('/var/lib/apt/periodic/update-success-stamp') < Time.now - 86400
+  # end
+  action :nothing
+end.run_action( :run )
+
 #install base dependencies.
 include_recipe 'build-essential::default'
 include_recipe 'python::default'
@@ -57,12 +68,23 @@ include_recipe 'git::default'
 package 'curl'
 package 'ntp'
 
-if node[:instance_role] == 'vagrant'
+if node[:vagrant]
   package 'ubuntu-desktop' #most vagrant base boxes dont have the desktop packages installed, so impossible to test VNC.
+  node[:greyhole][:mounted_drives].each do |mount_path|
+
+    #in vagrant, we dont actually mount any drives, so create folders manually.
+    directory mount_path do
+      owner node[:depot][:user]
+      group 'users'
+      recursive true
+      not_if do ::File.directory?(mount_path) end
+    end
+
+  end
 end
 
 #verify permissions on all mounted drives before running greyhole
-node[:greyhole][:mounted_drives].each{|mount_path|
+node[:greyhole][:mounted_drives].each do |mount_path|
   #set permissions on all mounted drives
   execute "chown-#{mount_path}" do
     command "chown -R #{node[:depot][:user]}:users #{mount_path}"
@@ -70,22 +92,25 @@ node[:greyhole][:mounted_drives].each{|mount_path|
     action :run
   end
 
+  gh_folder_path = ::File.join(mount_path, 'gh')
+
   #make sure gh folder exists, and has the correct permissions
-  directory ::File.join(mount_path, 'gh') do
+  directory gh_folder_path do
     owner node[:depot][:user]
     group 'users'
     recursive true
-    not_if do ::File.directory?(::File.join(mount_path, 'gh')) end
-    notifies :run, execute "chmod-#{::File.join(mount_path, 'gh')}"
+    not_if do ::File.directory?(gh_folder_path) end
+    notifies :run, "execute[chmod-#{gh_folder_path}]"
   end
-  execute "chmod-#{::File.join(mount_path, 'gh')}" do
-    command "chmod +s #{::File.join(mount_path, 'gh')}"
+
+  execute "chmod-#{gh_folder_path}" do
+    command "chmod +s #{gh_folder_path}"
     user 'root'
     action :nothing
   end
-}
+end
 
-include_recipe 'greyhole'
+include_recipe 'depot::greyhole'
 
 #base applications, installed alphabetically
 if node[:conky][:enabled]

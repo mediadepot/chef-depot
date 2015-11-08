@@ -16,3 +16,5 @@ gem 'berkshelf'
 
 gem "test-kitchen"
 gem "kitchen-vagrant"
+gem 'mysql2'
+gem "sqlite3"

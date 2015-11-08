@@ -13,7 +13,8 @@ end
 template "#{node[:depot][:home_dir]}/.conkyrc" do
   source 'home_depot_conkyrc.erb'
   variables({
-                :depot => node[:depot]
+                :depot => node[:depot],
+                :greyhole => node[:greyhole]
             })
   owner node[:depot][:user]
   group node[:depot][:group]

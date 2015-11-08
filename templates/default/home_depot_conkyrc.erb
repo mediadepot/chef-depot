@@ -119,7 +119,7 @@ $membar
 ${color 666666}DRIVE SPACE${color} ${color 666666}${hr}${color}
 ${font sans-serif:normal:size=8}SSD $alignc ${fs_used /} / ${fs_size /} $alignr ${fs_used_perc /}%
 ${fs_bar /}
-<% @depot[:mounted_drives].each_with_index do |drive, index| %>
+<% @greyhole[:mounted_drives].each_with_index do |drive, index| %>
 ${font sans-serif:normal:size=8}Drive<%=index+1%> $alignc ${fs_used <%=drive%>} / ${fs_size <%=drive%>} $alignr ${fs_used_perc <%=drive%>}%
 ${fs_bar <%=drive%>}
 <% end %>

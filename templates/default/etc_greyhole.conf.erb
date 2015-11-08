@@ -97,7 +97,7 @@
 #
 # Example:
 #
-<%@depot[:mounted_drives].each do |drive|%>
+<%@greyhole[:mounted_drives].each do |drive|%>
 	storage_pool_drive = <%=drive %>/gh, min_free: 10gb
 <% end %>
 
@@ -121,8 +121,8 @@
 # See https://github.com/gboudreau/Greyhole/wiki/SuggestedStorageSelectionAlgorithmUsage
 #   on how we suggest you use this feature.
 
-	drive_selection_groups = OK: <%=@depot[:mounted_drives][0]%>/gh, <%=@depot[:mounted_drives][1]%>/gh
-	                         NEW: <%=@depot[:mounted_drives][2]%>/gh, <%=@depot[:mounted_drives][3]%>/gh
+	drive_selection_groups = OK: <%=@greyhole[:mounted_drives][0]%>/gh, <%=@greyhole[:mounted_drives][1]%>/gh
+	                         NEW: <%=@greyhole[:mounted_drives][2]%>/gh, <%=@greyhole[:mounted_drives][3]%>/gh
 
 # You can also define drive_selection_groups for specific shares:
 #
