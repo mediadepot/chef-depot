@@ -106,7 +106,11 @@
 # WARNING! Do NOT enable that option when you're not testing Greyhole.
 # Doing so could result is lost data when a drive will fail.
 #
-#	allow_multiple_sp_per_device = no
+<% if @greyhole[:allow_multiple_sp_per_device]  %>
+    allow_multiple_sp_per_device = yes
+<% else %>
+#   allow_multiple_sp_per_device = no
+<% end %>
 
 ### Storage Drive Selection Groups ###
 # The groups you define here will be available to use in the

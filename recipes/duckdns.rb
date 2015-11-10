@@ -5,6 +5,13 @@
 # Copyright (C) 2015 Jason Kulatunga
 #
 
+directory node[:duckdns][:install_dir] do
+  owner node[:depot][:user]
+  group 'users'
+  recursive true
+  not_if do ::File.directory?(node[:duckdns][:install_dir]) end
+end
+
 template "#{node[:duckdns][:install_dir]}/duckdns.sh" do
   source "srv_apps_depot_tools_duckdns.sh.erb"
   owner node[:depot][:user]

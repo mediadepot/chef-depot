@@ -12,7 +12,7 @@ end
 
 docker_rancher 'depot_rancher_server' do
   settings({
-               'catalog.url' => 'https://github.com/prachidamle/rancher-catalog.git'
+               'catalog.url' => 'https://github.com/mediadepot/rancher-catalog.git'
            })
 end
 

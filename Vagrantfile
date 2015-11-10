@@ -36,6 +36,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # any other machines on the same network, but cannot be accessed (through this
   # network interface) by any external networks.
   config.vm.network :private_network, type: 'dhcp'
+  config.vm.network "forwarded_port", guest: 8080, host: 9090, auto_correct: true
+
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
@@ -76,16 +78,19 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # to skip installing and copying to Vagrant's shelf.
   # config.berkshelf.except = []
 
-  config.vm.provision "chef_zero" do |chef|
+  config.vm.provision 'chef_zero' do |chef|
     # Specify the local paths where Chef data is stored
     # chef.cookbooks_path = "cookbooks"
     chef.environments_path = 'environments'
     chef.environment = 'example'
 
     # Add a recipe
-    chef.add_recipe "depot"
+    chef.add_recipe 'depot'
     chef.json = {
-        vagrant: true
+        'vagrant' => true,
+        'greyhole' => {
+            'allow_multiple_sp_per_device' => true #for testing, all greyhole drives are on the same physical drive
+        }
     }
   end
 

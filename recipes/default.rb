@@ -129,3 +129,4 @@ if node[:smart_monitoring][:enabled]
   include_recipe 'depot::smart_monitoring'
 end
 
+include_recipe 'depot::docker'

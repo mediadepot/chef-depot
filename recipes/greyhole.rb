@@ -52,18 +52,29 @@ mysql_database_user node[:greyhole][:db][:user] do
 end
 
 #the following script is installed by the greyhole package.
-mysql_database node[:greyhole][:db][:name] do
-  database_name node[:greyhole][:db][:name]
-  connection(
-      :host     => 'localhost',
-      :username =>  node[:greyhole][:db][:user],
-      :password => node[:greyhole][:db][:password]
-  )
-  sql lazy { ::File.open('/usr/share/greyhole/schema-mysql.sql').read }
-  action :query
+# mysql_database node[:greyhole][:db][:name] do
+#   database_name node[:greyhole][:db][:name]
+#   connection(
+#       :host     => 'localhost',
+#       :username =>  node[:greyhole][:db][:user],
+#       :password => node[:greyhole][:db][:password]
+#   )
+#   sql lazy { ::File.open('/usr/share/greyhole/schema-mysql.sql','r:UTF-8').read }
+#   action :query
+#   not_if "mysql -u root -D greyhole -r -B -N -e \"SELECT * FROM settings\" | grep -q last_read_log_smbd_line"
+#
+# end
+#TODO: for some reason I'm getting syntax errors when attempting to use the mysql_database lwrp. for now we'll just do an
+#execute command.
+execute 'greyhole-schema' do
+  command "mysql -u #{node[:greyhole][:db][:user]} -p#{node[:greyhole][:db][:password]} greyhole < /usr/share/greyhole/schema-mysql.sql"
+  user 'root'
+  action :run
   not_if "mysql -u root -D greyhole -r -B -N -e \"SELECT * FROM settings\" | grep -q last_read_log_smbd_line"
-
 end
+
+
+
 
 #copy over the config file
 template '/etc/init/greyhole_watcher.conf' do
