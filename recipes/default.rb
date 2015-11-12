@@ -18,6 +18,8 @@ user node[:depot][:user] do
   shell '/bin/bash'
   comment 'Depot - Media Server'
   home node[:depot][:home_dir]
+  uid '15000'
+  gid '15000'
   system false
   password lazy { node[:depot][:password_hash] }
 end

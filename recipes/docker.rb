@@ -14,9 +14,11 @@ docker_rancher 'depot_rancher_server' do
   settings({
                'catalog.url' => 'https://github.com/mediadepot/rancher-catalog.git'
            })
+  notifies :create, 'docker_rancher_agent[depot_rancher_agent]', :delayed
 end
 
 docker_rancher_agent 'depot_rancher_agent' do
   manager_ipaddress node['ipaddress']
   single_node_mode true
+  action :nothing
 end
