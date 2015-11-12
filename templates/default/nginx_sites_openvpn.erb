@@ -1,12 +1,12 @@
-upstream sickbeard  {
-    server localhost:<%=@sickbeard[:listen_port]%>;
+upstream openvpn  {
+    server localhost:<%=@openvpn[:webui][:listen_port]%>;
 }
 
 server {
-    server_name  sickbeard.nexus.local;
+    server_name  openvpn.<%=@depot[:domain]%>;
 
     location / {
-        proxy_pass  http://sickbeard;
+        proxy_pass  http://openvpn;
         proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
         proxy_redirect off;
         proxy_buffering off;

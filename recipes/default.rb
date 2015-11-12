@@ -13,13 +13,19 @@ ruby_block 'set password hash' do
   }
 end
 
+group node[:depot][:group] do
+  action :create
+  gid '15000'
+  append true
+end
+
 #create the depot user.
 user node[:depot][:user] do
   shell '/bin/bash'
   comment 'Depot - Media Server'
   home node[:depot][:home_dir]
   uid '15000'
-  gid '15000'
+  group node[:depot][:group]
   system false
   password lazy { node[:depot][:password_hash] }
 end
@@ -123,9 +129,6 @@ if node[:openssh][:enabled]
 end
 if node[:openvpn][:enabled]
   include_recipe 'depot::openvpn'
-end
-if node[:vnc][:enabled]
-  include_recipe 'depot::vnc'
 end
 if node[:smart_monitoring][:enabled]
   include_recipe 'depot::smart_monitoring'

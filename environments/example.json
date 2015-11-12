@@ -8,7 +8,8 @@
     "depot":{
       "user":"depot",
       "group":"depot",
-      "password":"depotd3p0!"
+      "password":"depotd3p0!",
+      "domain": "depot.local"
     },
     "duckdns":{
       "_comment":"Only requred if OpenVPN is enabled",

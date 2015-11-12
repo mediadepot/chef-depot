@@ -25,9 +25,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Every Vagrant virtual environment requires a box to build off of.
   # If this value is a shorthand to a box in Vagrant Cloud then
   # config.vm.box_url doesn't need to be specified.
-  # config.vm.box = 'threatstack/ubuntu-14.04-amd64' #only chef installed
+  config.vm.box = 'threatstack/ubuntu-14.04-amd64' #only chef installed
   # config.vm.box = 'phusion/ubuntu-14.04-amd64' #only docker installed
-  config.vm.box = 'williamyeh/ubuntu-trusty64-docker' #only docker installed
+  # config.vm.box = 'williamyeh/ubuntu-trusty64-docker' #only docker installed
   # config.vm.box = 'tkak/ubuntu-14.04-amd64-chef-dk' #docker1.5 and chef installed
 
 

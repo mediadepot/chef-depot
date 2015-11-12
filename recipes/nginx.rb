@@ -7,13 +7,8 @@
 
 include_recipe 'nginx::source'
 
-nginx_sites = ['plex.nexus.local',
-               'deluge.nexus.local',
-               'sickbeard.nexus.local',
-               'couchpotato.nexus.local',
-               'headphones.nexus.local',
-               'admin.nexus.local',
-               'btsync.nexus.local'
+nginx_sites = ['manager',
+               'openvpn',
 ]
 
 nginx_sites.each do |site|
@@ -24,16 +19,12 @@ nginx_sites.each do |site|
     group node[:nginx][:group]
     variables({
                   :depot => node[:depot],
-                  :deluge => node[:deluge],
-                  :sickbeard => node[:sickbeard],
-                  :couchpotato => node[:couchpotato],
-                  :headphones => node[:headphones],
-                  :ajenti => node[:ajenti],
-                  :btsync => node[:btsync],
+                  :manager => node[:manager],
                   :openvpn => node[:openvpn]
+
               })
   end
-  nginx_site "#{site}"
+  nginx_site "#{site}.#{node['depot']['domain']}"
 end
 
 
