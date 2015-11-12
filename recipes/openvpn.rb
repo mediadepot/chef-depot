@@ -42,6 +42,7 @@ bash 'configure openvpn access server' do
   cwd '/usr/local/openvpn_as/scripts/'
   code <<-EOH
 ./sacli stop
+sleep 5
 ./sacli -k admin_ui.https.ip_address -v all ConfigPut
 ./sacli -k admin_ui.https.port -v #{node[:openvpn][:webui][:listen_port]} ConfigPut
 ./sacli -k cs.https.ip_address -v all ConfigPut
@@ -55,6 +56,7 @@ bash 'configure openvpn access server' do
 ./sacli -k vpn.server.daemon.tcp.port -v #{node[:openvpn][:server][:tcp_listen_port]} ConfigPut
 ./sacli -k vpn.server.daemon.udp.port -v #{node[:openvpn][:server][:udp_listen_port]} ConfigPut
 ./sacli -k host.name -v #{node[:duckdns][:domain]}.duckdns.org ConfigPut
+sleep 5
 ./sacli start
   EOH
 end
