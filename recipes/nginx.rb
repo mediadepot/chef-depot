@@ -9,6 +9,7 @@ include_recipe 'nginx::source'
 
 nginx_sites = ['manager',
                'openvpn',
+               'fallback'
 ]
 
 nginx_sites.each do |site|
@@ -24,13 +25,18 @@ nginx_sites.each do |site|
 
               })
   end
-  nginx_site "#{site}.#{node['depot']['domain']}"
+  nginx_site "#{site}"
 end
 
 
 hostsfile_entry '127.0.0.1' do
-  hostname  'nexus'
-  aliases   nginx_sites
+  hostname  'depot'
+  aliases lazy{
+
+    nginx_sites.collect {|site|
+      "#{site}.#{node[:depot][:domain]}"
+    }
+  }
   comment   'Aliases for nginx sites.'
   action    :append
 end

@@ -65,7 +65,7 @@ default[:greyhole][:db][:name] = 'greyhole'
 
 ##manager configuration
 default[:manager][:listen_port] = '50000'
-default[:manager][:load_balancer][:listen_port] = '80'
+default[:manager][:load_balancer][:listen_port] = '50001'
 
 ##nginx configuration
 default[:nginx][:install_method] = 'source'
