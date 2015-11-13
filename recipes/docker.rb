@@ -8,7 +8,7 @@
 # start the docker service
 
 docker_installation_binary 'default' do
-  version '1.7.1'
+  version '1.9.0'
 end
 
 docker_service_manager_upstart 'default' do
