@@ -77,7 +77,7 @@ package 'curl'
 package 'ntp'
 
 if node[:vagrant]
-  package 'ubuntu-desktop' #most vagrant base boxes dont have the desktop packages installed, so impossible to test VNC.
+  package 'ubuntu-desktop' if node[:vagrant][:install_desktop] #most vagrant base boxes dont have the desktop packages installed, so impossible to test VNC.
   node[:greyhole][:mounted_drives].each do |mount_path|
 
     #in vagrant, we dont actually mount any drives, so create folders manually.

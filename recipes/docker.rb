@@ -16,17 +16,70 @@ docker_service_manager_upstart 'default' do
   action :start
 end
 
-docker_rancher 'depot_rancher_server' do
+
+rancher_manager 'depot_rancher_server' do
   settings({
-               'catalog.url' => 'https://github.com/mediadepot/rancher-catalog.git'
-           })
+    'catalog.url' => 'https://github.com/mediadepot/rancher-catalog.git'
+  })
   port node[:manager][:listen_port]
-  notifies :create, 'docker_rancher_agent[depot_rancher_agent]', :delayed
 end
 
-docker_rancher_agent 'depot_rancher_agent' do
+rancher_auth_local node['depot']['user'] do
+  admin_password node['depot']['password']
+  manager_ipaddress node['ipaddress']
+  manager_port node[:manager][:listen_port]
+  not_if node['rancher']['flag']['authenticated']
+end
+
+rancher_agent 'depot_rancher_agent' do
   manager_ipaddress node['ipaddress']
   manager_port node[:manager][:listen_port]
   single_node_mode true
-  action :nothing
 end
+
+#create env_file (for docker-compose files )
+template "#{node[:depot][:home_dir]}/depot_rancher_file.env" do
+  source 'home_depot_rancher_file.env.erb'
+  variables lazy {
+    {
+      :depot => node[:depot],
+      :rancher => node[:rancher]
+    }
+  }
+  owner node[:depot][:user]
+  group node[:depot][:group]
+end
+
+#git clone the rancher-catalog
+git "#{node[:depot][:home_dir]}/rancher-catalog" do
+  repository 'https://github.com/mediadepot/rancher-catalog.git'
+  revision 'master'
+  action :sync
+end
+
+#install rancher-compose cli
+remote_file "#{Chef::Config[:file_cache_path]}/rancher-compose-linux-amd64-v0.5.2.tar.gz" do
+  source 'https://github.com/rancher/rancher-compose/releases/download/v0.5.2/rancher-compose-linux-amd64-v0.5.2.tar.gz'
+  mode 0644
+end
+
+#TODO: we need to standup the docker compose with the env file above.
+#extract rancher-compose and create the utility stack
+bash 'extract rancher-compose and create utility stack' do
+  user 'root'
+  group 'root'
+  code lazy {
+<<-EOH
+    tar xpzf #{Chef::Config[:file_cache_path]}/rancher-compose-linux-amd64-v0.5.2.tar.gz -C /tmp/
+    mv /tmp/rancher-compose-*/rancher-compose /usr/local/bin/rancher-compose
+    cd #{node[:depot][:home_dir]}/rancher-catalog/templates/utility/0
+    #run rancher up on the utility stack
+    rancher-compose --access-key #{node['rancher']['automation_api_key']} \
+      --secret-key #{node['rancher']['automation_api_secret']} \
+      --url http://#{node['ipaddress']}:#{node[:manager][:listen_port]} \
+      --project-name utility \
+      up -d
+EOH
+   }
+end
+
