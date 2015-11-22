@@ -38,12 +38,13 @@ rancher_agent 'depot_rancher_agent' do
 end
 
 #create env_file (for docker-compose files )
-template "#{node[:depot][:home_dir]}/depot_rancher_file.env" do
-  source 'home_depot_rancher_file.env.erb'
+template "#{node[:depot][:secrets_dir]}/depot_rancher_file.env" do
+  source 'srv_secrets_rancher_file.env.erb'
   variables lazy {
     {
       :depot => node[:depot],
-      :rancher => node[:rancher]
+      :rancher => node[:rancher],
+      :manager => node[:manager]
     }
   }
   owner node[:depot][:user]

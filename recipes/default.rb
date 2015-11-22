@@ -49,6 +49,18 @@ directory "#{node[:depot][:log_dir]}" do
   action :create
 end
 
+directory "#{node[:depot][:apps_dir]}" do
+  owner node[:depot][:user]
+  group node[:depot][:group]
+  action :create
+end
+
+directory "#{node[:depot][:secrets_dir]}" do
+  owner node[:depot][:user]
+  group node[:depot][:group]
+  action :create
+end
+
 #copy over the init for chefdk + ruby.
 template '/etc/profile.d/depot.sh' do
   source 'etc_profiled_depot.sh.erb'
