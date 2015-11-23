@@ -29,17 +29,29 @@ user node[:depot][:user] do
   system false
   password lazy { node[:depot][:password_hash] }
 end
+
 directory "#{node[:depot][:home_dir]}" do
   owner node[:depot][:user]
   group node[:depot][:group]
   mode 00755
   action :create
 end
+
 directory "#{node[:depot][:home_dir]}/.ssh" do
   owner node[:depot][:user]
   group node[:depot][:group]
   mode 00700
   action :create
+end
+
+remote_directory node[:depot][:home_dir] do
+  source 'depot_home'
+  files_owner node[:depot][:user]
+  files_group node[:depot][:group]
+  files_mode 0644
+  owner node[:depot][:user]
+  group node[:depot][:group]
+  mode 0755
 end
 
 #create depot log folder
@@ -50,12 +62,6 @@ directory "#{node[:depot][:log_dir]}" do
 end
 
 directory "#{node[:depot][:apps_dir]}" do
-  owner node[:depot][:user]
-  group node[:depot][:group]
-  action :create
-end
-
-directory "#{node[:depot][:secrets_dir]}" do
   owner node[:depot][:user]
   group node[:depot][:group]
   action :create

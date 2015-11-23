@@ -4,7 +4,6 @@ default['build-essential']['compile_time'] = true
 default[:depot][:salt] = 'rounds=500000$cEc2u3rRmSc0rvR1'
 default[:depot][:home_dir] = "/home/#{node[:depot][:user]}"
 default[:depot][:apps_dir] = '/srv/apps'
-default[:depot][:secrets_dir] = '/srv/secrets'
 default[:depot][:log_dir] = '/var/log/depot'
 default[:depot][:share_root] = '/var/share'
 default[:depot][:local_mount_root] = '/mnt/samba'

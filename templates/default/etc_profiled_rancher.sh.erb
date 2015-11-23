@@ -1,0 +1,7 @@
+# Set docker environment
+export DEPOT_USER=<%=@depot['user']%>
+export DEPOT_PASSWORD=<%=@depot['password']%>
+export RANCHER_API_KEY=<%=@rancher['automation_api_key']%>
+export RANCHER_API_SECRET=<%=@rancher['automation_api_secret']%>
+export RANCHER_MANAGER_HOSTNAME=<%=node['ipaddress']%>:<%=@manager[:listen_port]%>
+export DEPOT_DOMAIN=<%=@depot['domain']%>

@@ -22,6 +22,7 @@ rancher_manager 'depot_rancher_server' do
     'catalog.url' => 'https://github.com/mediadepot/rancher-catalog.git'
   })
   port node[:manager][:listen_port]
+  volumes ['/etc/profile.d:/etc/profile.d']
 end
 
 rancher_auth_local node['depot']['user'] do
@@ -38,8 +39,8 @@ rancher_agent 'depot_rancher_agent' do
 end
 
 #create env_file (for docker-compose files )
-template "#{node[:depot][:secrets_dir]}/depot_rancher_file.env" do
-  source 'srv_secrets_rancher_file.env.erb'
+template '/etc/profile.d/rancher.sh' do
+  source 'etc_profiled_rancher.sh.erb'
   variables lazy {
     {
       :depot => node[:depot],
@@ -49,6 +50,7 @@ template "#{node[:depot][:secrets_dir]}/depot_rancher_file.env" do
   }
   owner node[:depot][:user]
   group node[:depot][:group]
+  mode 0775
 end
 
 #git clone the rancher-catalog
@@ -71,6 +73,7 @@ bash 'extract rancher-compose and create utility stack' do
   group 'root'
   code lazy {
 <<-EOH
+    . /etc/profile.d/rancher.sh
     tar xpzf #{Chef::Config[:file_cache_path]}/rancher-compose-linux-amd64-v0.5.2.tar.gz -C /tmp/
     mv /tmp/rancher-compose-*/rancher-compose /usr/local/bin/rancher-compose
     cd #{node[:depot][:home_dir]}/rancher-catalog/templates/utility/0
