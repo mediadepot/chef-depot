@@ -36,9 +36,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # any other machines on the same network, but cannot be accessed (through this
   # network interface) by any external networks.
   config.vm.network :private_network, type: 'dhcp'
-  config.vm.network "forwarded_port", guest: 50000, host: 5000, auto_correct: true
-  config.vm.network "forwarded_port", guest: 50001, host: 5001, auto_correct: true
-  config.vm.network "forwarded_port", guest: 80, host: 5002, auto_correct: true
+  config.vm.network "forwarded_port", guest: 50000, host: 5000, auto_correct: true #manager
+  config.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true #load balancer
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,

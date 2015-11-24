@@ -65,14 +65,7 @@ default[:greyhole][:db][:name] = 'greyhole'
 
 ##manager configuration
 default[:manager][:listen_port] = '50000'
-default[:manager][:load_balancer][:listen_port] = '50001'
-
-##nginx configuration
-default[:nginx][:install_method] = 'source'
-default[:nginx][:user] = "#{node[:depot][:user]}"
-default[:nginx][:group] = "#{node[:depot][:group]}"
-default[:nginx][:init_style] = 'upstart'
-default[:nginx][:source]['use_existing_user'] = true
+default[:manager][:load_balancer][:listen_port] = '80'
 
 ##sshd configuration
 default[:openssh][:server][:password_authentication] = 'no'

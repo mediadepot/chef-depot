@@ -153,4 +153,3 @@ if node[:smart_monitoring][:enabled]
 end
 
 include_recipe 'depot::docker'
-include_recipe 'depot::nginx'

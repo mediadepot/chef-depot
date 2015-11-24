@@ -16,26 +16,26 @@ docker_service_manager_upstart 'default' do
   action :start
 end
 
-
 rancher_manager 'depot_rancher_server' do
   settings({
     'catalog.url' => 'https://github.com/mediadepot/rancher-catalog.git'
   })
   port node[:manager][:listen_port]
-  volumes ['/etc/profile.d:/etc/profile.d']
+  binds ['/etc/profile.d:/etc/profile.d']
 end
 
 rancher_auth_local node['depot']['user'] do
   admin_password node['depot']['password']
   manager_ipaddress node['ipaddress']
   manager_port node[:manager][:listen_port]
-  not_if node['rancher']['flag']['authenticated']
+  not_if do node['rancher']['flag']['authenticated'] end
 end
 
 rancher_agent 'depot_rancher_agent' do
   manager_ipaddress node['ipaddress']
   manager_port node[:manager][:listen_port]
   single_node_mode true
+  not_if('sudo docker ps | grep "rancher/agent" | wc -l')
 end
 
 #create env_file (for docker-compose files )
