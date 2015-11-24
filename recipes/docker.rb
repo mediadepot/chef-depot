@@ -35,7 +35,7 @@ rancher_agent 'depot_rancher_agent' do
   manager_ipaddress node['ipaddress']
   manager_port node[:manager][:listen_port]
   single_node_mode true
-  not_if('sudo docker ps | grep "rancher/agent" | wc -l')
+  # not_if('sudo docker ps | grep "rancher/agent" | wc -l')
 end
 
 #create env_file (for docker-compose files )
