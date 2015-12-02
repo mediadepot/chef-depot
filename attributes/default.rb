@@ -45,7 +45,7 @@ default[:depot][:applications] = [
     'openvpn',
     'popcorn_time',
     'update_service',
-    'vnc'
+    'x11vnc'
 ]
 
 default[:pushover]= {

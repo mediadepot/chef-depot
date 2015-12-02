@@ -1,8 +1,8 @@
 #
 # Cookbook Name:: depot
-# Recipe:: smart_monitoring
+# Recipe:: x11vnc
 #
 # Copyright (C) 2015 Jason Kulatunga
 #
 
-include_recipe 'smartmontools::default'
+include_recipe 'x11vnc::default'

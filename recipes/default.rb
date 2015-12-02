@@ -151,5 +151,9 @@ end
 if node[:smart_monitoring][:enabled]
   include_recipe 'depot::smart_monitoring'
 end
+if node[:x11vnc][:enabled]
+  include_recipe 'depot::x11vnc'
+end
+
 
 include_recipe 'depot::docker'

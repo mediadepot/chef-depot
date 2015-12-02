@@ -9,6 +9,7 @@
       "user":"depot",
       "group":"depot",
       "password":"depotd3p0!",
+      "_comment": "internal domain name",
       "domain": "depot.local"
     },
     "duckdns":{
@@ -85,13 +86,8 @@
     "update_service":{
       "enabled": true
     },
-    "vnc":{
+    "x11vnc":{
       "enabled": true
     }
-
-
-
-
-
   }
 }
