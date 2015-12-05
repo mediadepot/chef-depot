@@ -89,7 +89,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     chef.add_recipe 'depot'
     chef.json = {
         'vagrant' => {
-            'install_desktop' => true
+            'install_desktop' => false
         },
         'greyhole' => {
             'allow_multiple_sp_per_device' => true #for testing, all greyhole drives are on the same physical drive
