@@ -37,7 +37,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # network interface) by any external networks.
   config.vm.network :private_network, type: 'dhcp'
   config.vm.network "forwarded_port", guest: 50000, host: 5000, auto_correct: true #manager
-  config.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true #load balancer
+  config.vm.network "forwarded_port", guest: 8080, host: 8080, auto_correct: true #load balancer
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
@@ -89,10 +89,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     chef.add_recipe 'depot'
     chef.json = {
         'vagrant' => {
-            'install_desktop' => false
+            'install_desktop' => true
         },
         'greyhole' => {
             'allow_multiple_sp_per_device' => true #for testing, all greyhole drives are on the same physical drive
+        },
+        'manager' => {
+            'load_balancer' => {
+                'listen_port' => '8080' #for testing with a vagrant box, override the listen port so we can test with hostfile changes
+            }
         }
     }
   end
