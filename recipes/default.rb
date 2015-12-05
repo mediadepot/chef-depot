@@ -95,7 +95,15 @@ package 'curl'
 package 'ntp'
 
 if node[:vagrant]
-  package 'ubuntu-desktop' if node[:vagrant][:install_desktop] #most vagrant base boxes dont have the desktop packages installed, so impossible to test VNC.
+  package 'ubuntu-desktop' do
+    only_if { node[:vagrant][:install_desktop] } #most vagrant base boxes dont have the desktop packages installed, so impossible to test VNC.
+    notifies :run, 'execute[start-desktop-env]'
+  end
+  execute 'start-desktop-env' do
+    command 'startx &'
+    action :nothing
+  end
+
   node[:greyhole][:mounted_drives].each do |mount_path|
 
     #in vagrant, we dont actually mount any drives, so create folders manually.
@@ -105,8 +113,8 @@ if node[:vagrant]
       recursive true
       not_if do ::File.directory?(mount_path) end
     end
-
   end
+
 end
 
 #verify permissions on all mounted drives before running greyhole
