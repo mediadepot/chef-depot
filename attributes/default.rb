@@ -63,9 +63,11 @@ default[:greyhole][:db][:user] = 'greyhole_user'
 default[:greyhole][:db][:password] = '89y63jdwe' #this shouldnt really be tweaked, its set by the greyhole install script.
 default[:greyhole][:db][:name] = 'greyhole'
 
+##loadbalancer configuration
+defult[:load_balancer][:listen_port] = '80'
+
 ##manager configuration
 default[:manager][:listen_port] = '50000'
-default[:manager][:load_balancer][:listen_port] = '80'
 
 ##sshd configuration
 default[:openssh][:server][:password_authentication] = 'no'

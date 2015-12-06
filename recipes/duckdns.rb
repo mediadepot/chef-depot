@@ -18,7 +18,7 @@ template "#{node[:duckdns][:install_dir]}/duckdns.sh" do
   group node[:depot][:group]
   mode 0775
   variables({
-                :depot => node[:depot],
+                :duckdns_subdomain => node[:depot][:external_domain].split('.')[0],
                 :duckdns => node[:duckdns]
             })
 end

@@ -89,15 +89,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     chef.add_recipe 'depot'
     chef.json = {
         'vagrant' => {
-            'install_desktop' => false
+            'install_desktop' => true
         },
         'greyhole' => {
             'allow_multiple_sp_per_device' => true #for testing, all greyhole drives are on the same physical drive
         },
-        'manager' => {
-            'load_balancer' => {
-                'listen_port' => '8080' #for testing with a vagrant box, override the listen port so we can test with hostfile changes
-            }
+        'load_balancer' => {
+            'listen_port' => '8080' #for testing with a vagrant box, override the listen port so we can test with hostfile changes
         }
     }
   end

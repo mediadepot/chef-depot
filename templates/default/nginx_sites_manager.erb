@@ -3,7 +3,7 @@ upstream manager  {
 }
 
 server {
-    server_name  manager.<%=@depot[:domain]%>;
+    server_name  manager.<%=@depot[:internal_domain]%>;
 
     location / {
         proxy_pass  http://manager;

@@ -1,12 +1,12 @@
 # Set docker environment
 export DEPOT_USER=<%=@depot['user']%>
 export DEPOT_PASSWORD=<%=@depot['password']%>
-export DEPOT_DOMAIN=<%=@depot['domain']%>
+export DEPOT_DOMAIN=<%=@depot['internal_domain']%>
 export DEPOT_HOST=<%=node['ipaddress']%>
-export RANCHER_API_KEY=<%=@rancher['automation_api_key']%>
-export RANCHER_API_SECRET=<%=@rancher['automation_api_secret']%>
-export RANCHER_MANAGER_HOSTNAME=<%=node['ipaddress']%>:<%=@manager[:listen_port]%>
-export RANCHER_MANAGER_LOADBALANCER_PORT=<%=@manager[:load_balancer][:listen_port]%>
-export COUCHPOTATO_API_KEY=12345
-export SICKRAGE_API_KEY=12345
-export PUSHOVER_USER_KEY=1234
+# export RANCHER_API_KEY=<%=@rancher['automation_api_key']%>
+# export RANCHER_API_SECRET=<%=@rancher['automation_api_secret']%>
+# export RANCHER_MANAGER_HOSTNAME=<%=node['ipaddress']%>:<%=@manager[:listen_port]%>
+export RANCHER_LOADBALANCER_PORT=<%=@load_balancer[:listen_port]%>
+export COUCHPOTATO_API_KEY=couchpotato12345
+export SICKRAGE_API_KEY=sickrage12345
+export PUSHOVER_USER_KEY=pushover1234

@@ -3,7 +3,7 @@ upstream openvpn  {
 }
 
 server {
-    server_name  openvpn.<%=@depot[:domain]%>;
+    server_name  openvpn.<%=@depot[:internal_domain]%>;
 
     location / {
         proxy_pass  http://openvpn;

@@ -1,1 +1,1 @@
-echo url="https://www.duckdns.org/update?domains=<%=@duckdns[:domain]%>&token=<%=@duckdns[:token]%>&ip=" | curl -k -o <%=@duckdns[:install_dir]%>/duckdns.log -K -
+echo url="https://www.duckdns.org/update?domains=<%=@duckdns_subdomain%>&token=<%=@duckdns[:token]%>&ip=" | curl -k -o <%=@duckdns[:install_dir]%>/duckdns.log -K -

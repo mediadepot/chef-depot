@@ -35,6 +35,21 @@ rancher_agent 'depot_rancher_agent' do
   manager_ipaddress node['ipaddress']
   manager_port node[:manager][:listen_port]
   single_node_mode true
+
+  labels lazy {
+    host_labels = [
+        "depot.user:#{node[:depot][:user]}",
+        "depot.password=#{node[:depot][:password]}",
+        "depot.internal_domain=#{node[:depot][:internal_domain]}",
+        "depot.external_domain=#{node[:depot][:external_domain]}",
+        "depot.host.ipaddress=#{node['ipaddress']}",
+        "depot.load_balancer.port=#{node[:load_balancer][:port]}",
+        "depot.couchpotato.api_key=couchcouch",
+        "depot.sickrage.api_key=sicksick",
+        "depot.pushover.api_key=pushpush"
+    ]
+    host_labels
+  }
   # not_if('sudo docker ps | grep "rancher/agent" | wc -l')
 end
 
@@ -45,7 +60,8 @@ template '/etc/profile.d/rancher.sh' do
     {
       :depot => node[:depot],
       :rancher => node[:rancher],
-      :manager => node[:manager]
+      :manager => node[:manager],
+      :load_balancer => node[:load_balancer]
     }
   }
   owner node[:depot][:user]

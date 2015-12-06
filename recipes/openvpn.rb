@@ -55,7 +55,7 @@ sleep 5
 ./sacli -k vpn.daemon.0.server.ip_address -v all ConfigPut
 ./sacli -k vpn.server.daemon.tcp.port -v #{node[:openvpn][:server][:tcp_listen_port]} ConfigPut
 ./sacli -k vpn.server.daemon.udp.port -v #{node[:openvpn][:server][:udp_listen_port]} ConfigPut
-./sacli -k host.name -v #{node[:duckdns][:domain]}.duckdns.org ConfigPut
+./sacli -k host.name -v #{node[:depot][:external_domain]} ConfigPut
 sleep 5
 ./sacli start
   EOH

@@ -10,13 +10,13 @@
       "group":"depot",
       "password":"depotd3p0!",
       "_comment": "internal domain name",
-      "domain": "depot.local"
+      "internal_domain": "depot.local",
+      "external_domain": "depot.duckdns.org"
     },
     "duckdns":{
       "_comment":"Only requred if OpenVPN is enabled",
-      "_comment":"Duckdns is a dynamic dns service. When your home network ip address changes, your duckdns domain will be updated.",
-      "token": "",
-      "domain":"depot"
+      "_comment":"Duckdns is a dynamic dns service. When your home network ip address changes, your duckdns domain will be updated. make sure you configure depot.external_domain",
+      "token": ""
     },
 
     "github":{
