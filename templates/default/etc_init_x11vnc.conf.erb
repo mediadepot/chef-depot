@@ -2,9 +2,6 @@ start on login-session-start
 
 script
 
-#this works in the vm.
-#/usr/bin/x11vnc -xkb -forever -auth /var/run/lightdm/root/:1 -display :1 -rfbauth /etc/x11vnc.pass -rfbport 5900 -bg -o /var/log/x11vnc.log
-
 #enable flags in alphabetical order (there's alot of them)
 # -auth = The Xauthority file for the VNC server
 # -display = X11 server display to connect to, usually :0
@@ -16,19 +13,8 @@ script
 # -rfbport = TCP port for RFB protocol
 # -xkb = will allow better clipboard interactions
 
-#/usr/bin/x11vnc \
-#-auth /var/run/lightdm/root/:1 \
-#-display :1 \
-#-forever \
-#-o /var/log/x11vnc.log \
-#-repeat \
-#-rfbauth /etc/x11vnc.pass \
-#-rfbport 5900 \
-#-xkb
-
-#this is an attempt to findauth when noone has logged in yet
 /usr/bin/x11vnc \
--env FD_XDM=1 -findauth \
+-auth /var/run/lightdm/root/:1 \
 -display :1 \
 -forever \
 -o /var/log/x11vnc.log \
@@ -36,10 +22,5 @@ script
 -rfbauth /etc/x11vnc.pass \
 -rfbport 5900 \
 -xkb
-
-
-
-#/usr/bin/x11vnc -xkb -forever -auth /var/run/lightdm/root/:0 -display :0 -rfbauth /etc/x11vnc.pass -rfbport 5900 -bg -o /var/log/x11vnc.log
-#x11vnc -noxdamage -many -display :0 -auth guess -forever -bg -rfbauth /etc/x11vnc.pass -rfbport 5900 -o ~/x11vnc.log
 
 end script
