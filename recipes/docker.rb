@@ -39,14 +39,14 @@ rancher_agent 'depot_rancher_agent' do
   labels lazy {
     host_labels = [
         "depot.user:#{node[:depot][:user]}",
-        "depot.password=#{node[:depot][:password]}",
-        "depot.internal_domain=#{node[:depot][:internal_domain]}",
-        "depot.external_domain=#{node[:depot][:external_domain]}",
-        "depot.host.ipaddress=#{node['ipaddress']}",
-        "depot.load_balancer.port=#{node[:load_balancer][:port]}",
-        "depot.couchpotato.api_key=couchcouch",
-        "depot.sickrage.api_key=sicksick",
-        "depot.pushover.api_key=pushpush"
+        "depot.password:#{node[:depot][:password]}",
+        "depot.internal_domain:#{node[:depot][:internal_domain]}",
+        "depot.external_domain:#{node[:depot][:external_domain]}",
+        "depot.host.ipaddress:#{node['ipaddress']}",
+        "depot.load_balancer.listen_port:#{node[:load_balancer][:listen_port]}",
+        "depot.couchpotato.api_key:couchcouch",
+        "depot.sickrage.api_key:sicksick",
+        "depot.pushover.api_key:pushpush"
     ]
     host_labels
   }

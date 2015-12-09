@@ -95,13 +95,13 @@ package 'curl'
 package 'ntp'
 
 if node[:vagrant]
-  package 'ubuntu-desktop' do
-    only_if { node[:vagrant][:install_desktop] } #most vagrant base boxes dont have the desktop packages installed, so impossible to test VNC.
-    notifies :run, 'execute[start-desktop-env]'
-  end
-  execute 'start-desktop-env' do
-    command 'startx &'
-    action :nothing
+  # package 'ubuntu-desktop' do
+  #   only_if { node[:vagrant][:install_desktop] } #most vagrant base boxes dont have the desktop packages installed, so impossible to test VNC.
+  #   notifies :run, 'execute[start-desktop-env]'
+  # end
+  execute 'set permissions on tmp flder' do
+    command 'chmod 1777 /tmp'
+    action :run
   end
 
   node[:greyhole][:mounted_drives].each do |mount_path|
@@ -148,13 +148,13 @@ include_recipe 'depot::greyhole'
 
 #base applications, installed alphabetically
 if node[:conky][:enabled]
-  include_recipe 'depot::conky'
+  #include_recipe 'depot::conky'
 end
 if node[:openssh][:enabled]
   include_recipe 'depot::openssh'
 end
 if node[:openvpn][:enabled]
-  include_recipe 'depot::openvpn'
+#  include_recipe 'depot::openvpn'
 end
 if node[:smart_monitoring][:enabled]
   include_recipe 'depot::smart_monitoring'

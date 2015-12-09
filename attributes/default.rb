@@ -64,7 +64,7 @@ default[:greyhole][:db][:password] = '89y63jdwe' #this shouldnt really be tweake
 default[:greyhole][:db][:name] = 'greyhole'
 
 ##loadbalancer configuration
-defult[:load_balancer][:listen_port] = '80'
+default[:load_balancer][:listen_port] = '80'
 
 ##manager configuration
 default[:manager][:listen_port] = '50000'
@@ -201,5 +201,6 @@ default['samba']['log_dir'] = '/var/log/samba/%m.log'
 
 
 ## Media Library Updater (Push media to gist.)
+default['x11vnc']['password'] = "#{node['depot']['password']}"
 
 
