@@ -46,6 +46,7 @@ rancher_agent 'depot_rancher_agent' do
         "depot.load_balancer.listen_port:#{node[:load_balancer][:listen_port]}",
         "depot.couchpotato.api_key:couchcouch",
         "depot.sickrage.api_key:sicksick",
+        "depot.headphones.api_key:headhead",
         "depot.pushover.api_key:pushpush"
     ]
     host_labels
