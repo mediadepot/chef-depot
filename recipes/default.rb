@@ -145,6 +145,7 @@ node[:greyhole][:mounted_drives].each do |mount_path|
 end
 
 include_recipe 'depot::greyhole'
+include_recipe 'depot::dns'
 
 #base applications, installed alphabetically
 if node[:conky][:enabled]
@@ -154,7 +155,7 @@ if node[:openssh][:enabled]
   include_recipe 'depot::openssh'
 end
 if node[:openvpn][:enabled]
-#  include_recipe 'depot::openvpn'
+  include_recipe 'depot::openvpn'
 end
 if node[:smart_monitoring][:enabled]
   include_recipe 'depot::smart_monitoring'
