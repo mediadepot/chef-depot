@@ -6,7 +6,8 @@ export DEPOT_HOST=<%=node['ipaddress']%>
 # export RANCHER_API_KEY=<%=@rancher['automation_api_key']%>
 # export RANCHER_API_SECRET=<%=@rancher['automation_api_secret']%>
 # export RANCHER_MANAGER_HOSTNAME=<%=node['ipaddress']%>:<%=@manager[:listen_port]%>
-export RANCHER_LOADBALANCER_PORT=<%=@load_balancer[:http_listen_port]%>
+export RANCHER_LOADBALANCER_HTTP_PORT=<%=@load_balancer[:http_listen_port]%>
+export RANCHER_LOADBALANCER_HTTPS_PORT=<%=@load_balancer[:https_listen_port]%>
 export COUCHPOTATO_API_KEY=couchpotato12345
 export SICKRAGE_API_KEY=sickrage12345
 export PUSHOVER_USER_KEY=pushover1234
