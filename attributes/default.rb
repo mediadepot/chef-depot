@@ -74,7 +74,8 @@ default[:greyhole][:db][:password] = '89y63jdwe' #this shouldnt really be tweake
 default[:greyhole][:db][:name] = 'greyhole'
 
 ##loadbalancer configuration
-default[:load_balancer][:listen_port] = '80'
+default[:load_balancer][:http_listen_port] = '80'
+default[:load_balancer][:https_listen_port] = '443'
 
 ##manager configuration
 default[:manager][:listen_port] = '50000'
