@@ -25,11 +25,21 @@ default[:depot][:mapped_folders] = {
     'music' => {
         :folder_name => '[Music]',
         :label => 'music'
+    },
+    'ebooks' => {
+        :folder_name => '[Ebooks]',
+        :label => 'ebooks'
+    },
+    'photos' => {
+        :folder_name => '[Photos]',
+        :label => 'photos'
     }
 }
 default[:depot][:tvshows_path] = "#{node[:depot][:local_mount_root]}/tvshows"
 default[:depot][:movies_path] = "#{node[:depot][:local_mount_root]}/movies"
 default[:depot][:music_path] = "#{node[:depot][:local_mount_root]}/music"
+default[:depot][:ebooks_path] = "#{node[:depot][:local_mount_root]}/ebooks"
+default[:depot][:ebooks_path] = "#{node[:depot][:local_mount_root]}/photos"
 
 default[:depot][:applications] = [
     'backup_library_config',
@@ -166,6 +176,38 @@ default[:samba][:shares] = {
     },
     'music' => {
         'path' => '/var/share/media/music',
+        'create mask' => '0770',
+        'directory mask' => '0770',
+        'read only' => 'no',
+        'available' => 'yes',
+        'browseable' => 'yes',
+        'writable' => 'yes',
+        'guest ok' => 'no',
+        'printable' => 'no',
+        'dfree command' => '/usr/bin/greyhole-dfree',
+        'vfs objects' => 'greyhole',
+        'force user' => "#{node[:depot][:user]}",
+        'force create mode' => '0770',
+        'force directory mode' => '0770'
+    },
+    'ebooks' => {
+        'path' => '/var/share/media/ebooks',
+        'create mask' => '0770',
+        'directory mask' => '0770',
+        'read only' => 'no',
+        'available' => 'yes',
+        'browseable' => 'yes',
+        'writable' => 'yes',
+        'guest ok' => 'no',
+        'printable' => 'no',
+        'dfree command' => '/usr/bin/greyhole-dfree',
+        'vfs objects' => 'greyhole',
+        'force user' => "#{node[:depot][:user]}",
+        'force create mode' => '0770',
+        'force directory mode' => '0770'
+    },
+    'photos' => {
+        'path' => '/var/share/media/photos',
         'create mask' => '0770',
         'directory mask' => '0770',
         'read only' => 'no',
