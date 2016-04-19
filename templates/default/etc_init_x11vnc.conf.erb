@@ -3,8 +3,11 @@ start on login-session-start
 script
 
 #enable flags in alphabetical order (there's alot of them)
+# http://www.karlrunge.com/x11vnc/x11vnc_opts.html
+# http://www.richud.com/wiki/Ubuntu_Fluxbox_GUI_with_x11vnc_and_Xvfb
 # -auth = The Xauthority file for the VNC server
-# -display = X11 server display to connect to, usually :0
+# -display = X11 server display to connect to, usually :0 # use -display :1 to connect to depot user's session
+# -create = First try to find the user's display using FINDDISPLAY if that doesn't succeed create an X session via the FINDCREATEDISPLAY method.
 # -forever = means even if you disconnect from your session, x11vnc will still be alive
 # -o = Write stderr messages to file "logfile" instead of to the terminal.
 # -repeat = is allowing keyboard repeating keys (most annoying thing when it doesn’t work)
@@ -14,8 +17,8 @@ script
 # -xkb = will allow better clipboard interactions
 
 /usr/bin/x11vnc \
--auth /var/run/lightdm/root/:1 \
--display :1 \
+-auth /var/run/lightdm/root/:0 \
+-display :0 \
 -forever \
 -o /var/log/x11vnc.log \
 -repeat \

@@ -10,7 +10,7 @@
       "group":"depot",
       "password":"depotd3p0!",
       "_comment": "internal domain name",
-      "internal_domain": "depot.local",
+      "internal_domain": "depot",
       "external_domain": "depot.duckdns.org"
     },
     "duckdns":{

@@ -145,7 +145,7 @@ node[:greyhole][:mounted_drives].each do |mount_path|
 end
 
 include_recipe 'depot::greyhole'
-include_recipe 'depot::dns'
+include_recipe 'depot::dnsmasq'
 
 #base applications, installed alphabetically
 if node[:conky][:enabled]
