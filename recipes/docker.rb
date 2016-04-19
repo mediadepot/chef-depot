@@ -79,8 +79,8 @@ git "#{node[:depot][:home_dir]}/rancher-catalog" do
 end
 
 #install rancher-compose cli
-remote_file "#{Chef::Config[:file_cache_path]}/rancher-compose-linux-amd64-v0.5.2.tar.gz" do
-  source 'https://github.com/rancher/rancher-compose/releases/download/v0.5.2/rancher-compose-linux-amd64-v0.5.2.tar.gz'
+remote_file "#{Chef::Config[:file_cache_path]}/rancher-compose-linux-amd64-v0.7.4.tar.gz" do
+  source 'https://github.com/rancher/rancher-compose/releases/download/v0.7.4/rancher-compose-linux-amd64-v0.7.4.tar.gz'
   mode 0644
 end
 
@@ -92,7 +92,7 @@ bash 'extract rancher-compose and create utility stack' do
   code lazy {
 <<-EOH
     . /etc/profile.d/rancher.sh
-    tar xpzf #{Chef::Config[:file_cache_path]}/rancher-compose-linux-amd64-v0.5.2.tar.gz -C /tmp/
+    tar xpzf #{Chef::Config[:file_cache_path]}/rancher-compose-linux-amd64-v0.7.4.tar.gz -C /tmp/
     mv /tmp/rancher-compose-*/rancher-compose /usr/local/bin/rancher-compose
     cd #{node[:depot][:home_dir]}/rancher-catalog/templates/utility/0
     #run rancher up on the utility stack
