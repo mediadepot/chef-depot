@@ -7,33 +7,37 @@
 
 #download new version of libfuse and fuse (because otherwise merger has problems)
 
-remote_file "#{Chef::Config[:file_cache_path]}/libfuse2_2.9.5-1_amd64.deb" do
-  source 'http://http.us.debian.org/debian/pool/main/f/fuse/libfuse2_2.9.5-1_amd64.deb'
-  mode 0644
-end
-dpkg_package 'libfuse2_2.9.5-1_amd64.deb' do
-  source "#{Chef::Config[:file_cache_path]}/libfuse2_2.9.5-1_amd64.deb"
-  action :install
-end
-
-remote_file "#{Chef::Config[:file_cache_path]}/fuse_2.9.5-1_amd64.deb" do
-  source 'http://http.us.debian.org/debian/pool/main/f/fuse/fuse_2.9.5-1_amd64.deb'
-  mode 0644
-end
-dpkg_package 'fuse_2.9.5-1_amd64.deb' do
-  source "#{Chef::Config[:file_cache_path]}/fuse_2.9.5-1_amd64.deb"
-  action :install
-end
-
-remote_file "#{Chef::Config[:file_cache_path]}/mergerfs_2.12.3.debian-wheezy_amd64.deb" do
-  source 'https://github.com/trapexit/mergerfs/releases/download/2.12.3/mergerfs_2.12.3.debian-wheezy_amd64.deb'
+remote_file "#{Chef::Config[:file_cache_path]}/libfuse2_2.9.4-1ubuntu1_amd64.deb" do
+  source 'http://mirrors.kernel.org/ubuntu/pool/main/f/fuse/libfuse2_2.9.4-1ubuntu1_amd64.deb'
   mode 0644
 end
 
-dpkg_package 'mergerfs_2.12.3.debian-wheezy_amd64.deb' do
-  source "#{Chef::Config[:file_cache_path]}/mergerfs_2.12.3.debian-wheezy_amd64.deb"
-  action :install
+remote_file "#{Chef::Config[:file_cache_path]}/fuse_2.9.4-1ubuntu1_amd64.deb" do
+  source 'http://mirrors.kernel.org/ubuntu/pool/main/f/fuse/fuse_2.9.4-1ubuntu1_amd64.deb'
+  mode 0644
 end
+
+remote_file "#{Chef::Config[:file_cache_path]}/mergerfs_2.12.3.ubuntu-trusty_amd64.deb" do
+  source 'https://github.com/trapexit/mergerfs/releases/download/2.12.3/mergerfs_2.12.3.ubuntu-trusty_amd64.deb'
+  mode 0644
+end
+
+execute 'install mergerfs package and deps' do
+  # command 'dpkg -i libfuse2_2.9.4-1ubuntu1_amd64.deb fuse_2.9.4-1ubuntu1_amd64.deb mergerfs_2.12.3.ubuntu-trusty_amd64.deb'
+  command 'dpkg -i *.deb'
+  cwd "#{Chef::Config[:file_cache_path]}/"
+  user 'root'
+  action :run
+end
+
+# dpkg_package 'install_mergerfs' do
+#   package_name [
+#                    "#{Chef::Config[:file_cache_path]}/libfuse2_2.9.4-1ubuntu1_amd64.deb",
+#                    "#{Chef::Config[:file_cache_path]}/fuse_2.9.4-1ubuntu1_amd64.deb",
+#                    "#{Chef::Config[:file_cache_path]}/mergerfs_2.12.3.ubuntu-trusty_amd64.deb"
+#                ]
+#   action :install
+# end
 
 directory node[:depot][:storage_mount_root]  do
   owner node[:depot][:user]

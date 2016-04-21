@@ -18,7 +18,7 @@ end
 
 rancher_manager 'depot_rancher_server' do
   settings({
-    'catalog.url' => 'https://github.com/mediadepot/rancher-catalog.git'
+    'catalog.url' => 'mediadepot=https://github.com/mediadepot/rancher-catalog.git'
   })
   port node[:manager][:listen_port]
   binds ['/etc/profile.d:/etc/profile.d']
