@@ -74,6 +74,9 @@
     "smart_monitoring":{
       "enabled": true
     },
+    "samba":{
+      "enabled": true
+    },
     "openssh":{
       "enabled": true
     },

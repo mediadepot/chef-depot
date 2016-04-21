@@ -99,6 +99,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # This cookbook expects the disks to be formatted.
   # The cookbook will mount partitions
   config.vm.provision "shell", inline: <<-EOF
+        # fix sources to use us servers insead of de.
+        sed -i 's|http://de.|http://us.|g' /etc/apt/sources.list
+
+        # for some reason the tmp folder permissions get screwed up.
+        chmod 1777 /tmp
+
         # apt-get install -y gdisk
         if [ ! -b /dev/sdb1 ]
         then

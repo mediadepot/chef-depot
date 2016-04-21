@@ -88,8 +88,8 @@ execute "apt-get-update-periodic" do
 end.run_action( :run )
 
 #install base dependencies.
-include_recipe 'build-essential::default'
-include_recipe 'python::default'
+# include_recipe 'build-essential::default'
+# include_recipe 'python::default'
 include_recipe 'git::default'
 package 'curl'
 package 'ntp'
@@ -118,6 +118,13 @@ node[:mount][:drives].each do |drive|
     fstype drive[:fstype]
     action [:mount, :enable]
   end
+
+  #verify permissions on all mounted drives before running mergerfs
+  execute "chown-#{drive[:mount_point]}" do
+    command "chown -R #{node[:depot][:user]}:users #{drive[:mount_point]}"
+    user 'root'
+    action :run
+  end
 end
 
 # Create the temp folder mount directory structure, because it's not located in the mergerfs JBOD drive.
@@ -140,13 +147,29 @@ directory node[:depot][:blackhole_path] do
   not_if do ::File.directory?(node[:depot][:blackhole_path]) end
 end
 
+#add special folders to blackhole. Torrents added to the blackhole folder will be saved to the
+#associated downloads folder after completed.
+node[:depot][:mapped_folders].each_pair do |key,value|
+  directory "#{node[:depot][:blackhole_path]}/#{value[:folder_name]}" do
+    recursive true
+    owner node[:depot][:user]
+    group 'users'
+  end
+end
+
+#verify permissions on all temp storage folder and sub directories
+execute "chown-#{node[:depot][:tmp_mount_root]}" do
+  command "chown -R #{node[:depot][:user]}:users #{node[:depot][:tmp_mount_root]}"
+  user 'root'
+  action :run
+end
 
 include_recipe 'depot::mergerfs'
 include_recipe 'depot::dnsmasq'
 
 #base applications, installed alphabetically
 if node[:conky][:enabled]
-  include_recipe 'depot::conky'
+  #include_recipe 'depot::conky'
 end
 if node[:openssh][:enabled]
   include_recipe 'depot::openssh'
@@ -154,12 +177,14 @@ end
 if node[:openvpn][:enabled]
   include_recipe 'depot::openvpn'
 end
+if node[:samba][:enabled]
+  include_recipe 'depot::samba'
+end
 if node[:smart_monitoring][:enabled]
   include_recipe 'depot::smart_monitoring'
 end
 if node[:x11vnc][:enabled]
   include_recipe 'depot::x11vnc'
 end
-
 
 include_recipe 'depot::docker'
