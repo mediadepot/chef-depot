@@ -72,8 +72,8 @@ template '/etc/profile.d/depot.sh' do
   source 'etc_profiled_depot.sh.erb'
   mode 0775
   variables({
-                :depot => node[:depot]
-            })
+      :depot => node[:depot]
+  })
 end
 
 #run apt-get update (required for most installs)
@@ -104,52 +104,49 @@ if node[:vagrant]
     action :run
   end
 
-  node[:greyhole][:mounted_drives].each do |mount_path|
-
-    #in vagrant, we dont actually mount any drives, so create folders manually.
-    directory mount_path do
-      owner node[:depot][:user]
-      group 'users'
-      recursive true
-      not_if do ::File.directory?(mount_path) end
-    end
-  end
-
 end
 
-#verify permissions on all mounted drives before running greyhole
-node[:greyhole][:mounted_drives].each do |mount_path|
-  #set permissions on all mounted drives
-  execute "chown-#{mount_path}" do
-    command "chown -R #{node[:depot][:user]}:users #{mount_path}"
-    user 'root'
-    action :run
-  end
-
-  gh_folder_path = ::File.join(mount_path, 'gh')
-
-  #make sure gh folder exists, and has the correct permissions
-  directory gh_folder_path do
+node[:mount][:drives].each do |drive|
+  directory drive[:mount_point]  do
     owner node[:depot][:user]
     group 'users'
-    recursive true
-    not_if do ::File.directory?(gh_folder_path) end
-    notifies :run, "execute[chmod-#{gh_folder_path}]"
+    not_if do ::File.directory?(drive[:mount_point]) end
   end
-
-  execute "chmod-#{gh_folder_path}" do
-    command "chmod +s #{gh_folder_path}"
-    user 'root'
-    action :nothing
+  mount drive[:mount_point] do
+    device drive[:device]
+    device_type drive[:device_type]
+    fstype drive[:fstype]
+    action [:mount, :enable]
   end
 end
 
-include_recipe 'depot::greyhole'
+# Create the temp folder mount directory structure, because it's not located in the mergerfs JBOD drive.
+directory node[:depot][:tmp_mount_root] do
+  owner node[:depot][:user]
+  group 'users'
+  recursive true
+  not_if do ::File.directory?(node[:depot][:tmp_mount_root]) end
+end
+directory node[:depot][:processing_path] do
+  owner node[:depot][:user]
+  group 'users'
+  recursive true
+  not_if do ::File.directory?(node[:depot][:processing_path]) end
+end
+directory node[:depot][:blackhole_path] do
+  owner node[:depot][:user]
+  group 'users'
+  recursive true
+  not_if do ::File.directory?(node[:depot][:blackhole_path]) end
+end
+
+
+include_recipe 'depot::mergerfs'
 include_recipe 'depot::dnsmasq'
 
 #base applications, installed alphabetically
 if node[:conky][:enabled]
-  #include_recipe 'depot::conky'
+  include_recipe 'depot::conky'
 end
 if node[:openssh][:enabled]
   include_recipe 'depot::openssh'
