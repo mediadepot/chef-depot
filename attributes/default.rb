@@ -148,7 +148,12 @@ default['samba']['services'] = ['smbd', 'nmbd']
 default['samba']['config'] = '/etc/samba/smb.conf'
 default['samba']['log_dir'] = '/var/log/samba/%m.log'
 
-
+# Smartmontools, S.M.A.R.T disk monitoring
+default['smartmontools']['start_smartd'] = 'yes'
+default['smartmontools']['smartd_opts']  = ''
+default['smartmontools']['devices']      = []
+default['smartmontools']['device_opts']  = '-a -o on -S on -s (S/../.././02|L/../../6/03) -m root -M exec /usr/share/smartmontools/smartd-runner'
+default['smartmontools']['run_d']        = ['pushover']
 
 
 ## Media Library Updater (Push media to gist.)
