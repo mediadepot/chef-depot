@@ -30,15 +30,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # config.vm.box = 'williamyeh/ubuntu-trusty64-docker' #only docker installed
   # config.vm.box = 'tkak/ubuntu-14.04-amd64-chef-dk' #docker1.5 and chef installed
   config.vm.box = 'rudolfochrist/ubuntu-desktop' #no docker, no chef, desktop x64
+  # config.vm.box = 'box-cutter/ubuntu1404-desktop' #no docker, no chef, desktop x64
 
   # Assign this VM to a host-only network IP, allowing you to access it
   # via the IP. Host-only networks can talk to the host machine as well as
   # any other machines on the same network, but cannot be accessed (through this
   # network interface) by any external networks.
   config.vm.network :private_network, type: 'dhcp'
-  config.vm.network "forwarded_port", guest: 50000, host: 5000, auto_correct: true #manager
-  config.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true #load balancer
-  config.vm.network "forwarded_port", guest: 943, host: 943, auto_correct: true #load balancer
+  # config.vm.network "forwarded_port", guest: 50000, host: 5000, auto_correct: true #manager
+  # config.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true #load balancer
+  # config.vm.network "forwarded_port", guest: 943, host: 943, auto_correct: true #load balancer
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
@@ -71,7 +72,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       end
         vb.customize ['storageattach', :id,
-                      '--storagectl', 'SATA',
+                      '--storagectl', 'SATA Controller',
                       '--port', i, '--device', 0, '--type', 'hdd', '--medium', "drives/drive_#{i}.vdi"]
 
     end

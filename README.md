@@ -45,6 +45,9 @@ Author:: YOUR_NAME (<YOUR_EMAIL>)
 
 
 ## Testing/Development
-  https://github.com/rancher/rancher/issues/1920 Hairpin nat fails 
+  - https://github.com/rancher/rancher/issues/1920 Hairpin nat fails 
   
-  - curl --header 'Host: couchpotato.depot.local' 'http://10.0.2.15:8080'
+  - `curl --header 'Host: couchpotato.depot.local' 'http://10.0.2.15:8080'`
+  
+  - `dig 127.0.0.1 mystack.depot.lan` 
+  - `dig 10.0.2.15 mystack.depot` 
