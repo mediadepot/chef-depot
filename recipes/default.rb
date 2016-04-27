@@ -72,8 +72,8 @@ template '/etc/profile.d/depot.sh' do
   source 'etc_profiled_depot.sh.erb'
   mode 0775
   variables({
-                :depot => node[:depot]
-            })
+      :depot => node[:depot]
+  })
 end
 
 #run apt-get update (required for most installs)
@@ -88,8 +88,8 @@ execute "apt-get-update-periodic" do
 end.run_action( :run )
 
 #install base dependencies.
-include_recipe 'build-essential::default'
-include_recipe 'python::default'
+# include_recipe 'build-essential::default'
+# include_recipe 'python::default'
 include_recipe 'git::default'
 package 'curl'
 package 'ntp'
@@ -99,52 +99,72 @@ if node[:vagrant]
   #   only_if { node[:vagrant][:install_desktop] } #most vagrant base boxes dont have the desktop packages installed, so impossible to test VNC.
   #   notifies :run, 'execute[start-desktop-env]'
   # end
-  execute 'set permissions on tmp flder' do
-    command 'chmod 1777 /tmp'
-    action :run
-  end
-
-  node[:greyhole][:mounted_drives].each do |mount_path|
-
-    #in vagrant, we dont actually mount any drives, so create folders manually.
-    directory mount_path do
-      owner node[:depot][:user]
-      group 'users'
-      recursive true
-      not_if do ::File.directory?(mount_path) end
-    end
-  end
+  # execute 'set permissions on tmp flder' do
+  #   command 'chmod 1777 /tmp'
+  #   action :run
+  # end
 
 end
 
-#verify permissions on all mounted drives before running greyhole
-node[:greyhole][:mounted_drives].each do |mount_path|
-  #set permissions on all mounted drives
-  execute "chown-#{mount_path}" do
-    command "chown -R #{node[:depot][:user]}:users #{mount_path}"
-    user 'root'
-    action :run
-  end
-
-  gh_folder_path = ::File.join(mount_path, 'gh')
-
-  #make sure gh folder exists, and has the correct permissions
-  directory gh_folder_path do
+node[:mount][:drives].each do |drive|
+  directory drive[:mount_point]  do
     owner node[:depot][:user]
     group 'users'
-    recursive true
-    not_if do ::File.directory?(gh_folder_path) end
-    notifies :run, "execute[chmod-#{gh_folder_path}]"
+    not_if do ::File.directory?(drive[:mount_point]) end
+  end
+  mount drive[:mount_point] do
+    device drive[:device]
+    device_type drive[:device_type]
+    fstype drive[:fstype]
+    action [:mount, :enable]
   end
 
-  execute "chmod-#{gh_folder_path}" do
-    command "chmod +s #{gh_folder_path}"
+  #verify permissions on all mounted drives before running mergerfs
+  execute "chown-#{drive[:mount_point]}" do
+    command "chown -R #{node[:depot][:user]}:users #{drive[:mount_point]}"
     user 'root'
-    action :nothing
+    action :run
   end
 end
 
-include_recipe 'depot::greyhole'
+# Create the temp folder mount directory structure, because it's not located in the mergerfs JBOD drive.
+directory node[:depot][:tmp_mount_root] do
+  owner node[:depot][:user]
+  group 'users'
+  recursive true
+  not_if do ::File.directory?(node[:depot][:tmp_mount_root]) end
+end
+directory node[:depot][:processing_path] do
+  owner node[:depot][:user]
+  group 'users'
+  recursive true
+  not_if do ::File.directory?(node[:depot][:processing_path]) end
+end
+directory node[:depot][:blackhole_path] do
+  owner node[:depot][:user]
+  group 'users'
+  recursive true
+  not_if do ::File.directory?(node[:depot][:blackhole_path]) end
+end
+
+#add special folders to blackhole. Torrents added to the blackhole folder will be saved to the
+#associated downloads folder after completed.
+node[:depot][:mapped_folders].each_pair do |key,value|
+  directory "#{node[:depot][:blackhole_path]}/#{value[:folder_name]}" do
+    recursive true
+    owner node[:depot][:user]
+    group 'users'
+  end
+end
+
+#verify permissions on all temp storage folder and sub directories
+execute "chown-#{node[:depot][:tmp_mount_root]}" do
+  command "chown -R #{node[:depot][:user]}:users #{node[:depot][:tmp_mount_root]}"
+  user 'root'
+  action :run
+end
+
+include_recipe 'depot::mergerfs'
 include_recipe 'depot::dnsmasq'
 
 #base applications, installed alphabetically
@@ -157,12 +177,14 @@ end
 if node[:openvpn][:enabled]
   include_recipe 'depot::openvpn'
 end
+if node[:samba][:enabled]
+  include_recipe 'depot::samba'
+end
 if node[:smart_monitoring][:enabled]
   include_recipe 'depot::smart_monitoring'
 end
 if node[:x11vnc][:enabled]
   include_recipe 'depot::x11vnc'
 end
-
 
 include_recipe 'depot::docker'

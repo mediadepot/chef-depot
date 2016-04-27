@@ -1,0 +1,26 @@
+#!/usr/bin/env python
+
+import sys
+import os
+import platform
+import httplib
+import urllib
+
+if __name__ == '__main__':
+
+	# see https://pushover.net/api#messages for a list of priorities and messages
+	payload = {
+		'token': '<%=@pushover[:appid]%>',
+		'user': '<%=@pushover[:userid]%>',
+		'title': os.environ['SMARTD_SUBJECT'],
+		'message': "Alert on %s (%s)\n%s" % (os.environ['SMARTD_DEVICE'], platform.node(), os.environ['SMARTD_MESSAGE'] ),
+		'priority': 1
+ 	}
+
+	body = urllib.urlencode(payload)
+	headers = { 'Content-type': 'application/x-www-form-urlencoded' }
+
+	conn = httplib.HTTPSConnection('api.pushover.net:443')
+	conn.request('POST', '/1/messages.json', body, headers)
+	conn.getresponse()
+

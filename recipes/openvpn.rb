@@ -43,16 +43,18 @@ bash 'configure openvpn access server' do
   code <<-EOH
 ./sacli stop
 sleep 5
+./sacli -u #{node[:openvpn][:webui][:login]} -k prop_superuser -v true UserPropPut
 ./sacli -k admin_ui.https.ip_address -v all ConfigPut
 ./sacli -k admin_ui.https.port -v #{node[:openvpn][:webui][:listen_port]} ConfigPut
 ./sacli -k cs.https.ip_address -v all ConfigPut
 ./sacli -k cs.https.port -v #{node[:openvpn][:webui][:listen_port]} ConfigPut
 ./sacli -k vpn.client.routing.inter_client -v false ConfigPut
-./sacli -k vpn.client.routing.reroute_dns -v false ConfigPut
+./sacli -k vpn.client.routing.reroute_dns -v custom ConfigPut
 ./sacli -k vpn.client.routing.reroute_gw -v false ConfigPut
 ./sacli -k vpn.daemon.0.listen.ip_address -v all ConfigPut
 ./sacli -k vpn.daemon.0.listen.port -v #{node[:openvpn][:server][:tcp_listen_port]} ConfigPut
 ./sacli -k vpn.daemon.0.server.ip_address -v all ConfigPut
+./sacli -k vpn.server.dhcp_option.dns.0 -v #{node['ipaddress']} ConfigPut
 ./sacli -k vpn.server.daemon.tcp.port -v #{node[:openvpn][:server][:tcp_listen_port]} ConfigPut
 ./sacli -k vpn.server.daemon.udp.port -v #{node[:openvpn][:server][:udp_listen_port]} ConfigPut
 ./sacli -k host.name -v #{node[:depot][:external_domain]} ConfigPut

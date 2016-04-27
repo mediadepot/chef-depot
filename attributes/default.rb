@@ -5,18 +5,22 @@ default[:depot][:salt] = 'rounds=500000$cEc2u3rRmSc0rvR1'
 default[:depot][:home_dir] = "/home/#{node[:depot][:user]}"
 default[:depot][:apps_dir] = '/srv/apps'
 default[:depot][:log_dir] = '/var/log/depot'
-default[:depot][:share_root] = '/var/share'
-default[:depot][:local_mount_root] = '/mnt/samba'
-#the following paths are created by the mount_shares_locally service, and match the samba share names.
-default[:depot][:processing_path] = "#{node[:depot][:local_mount_root]}/processing"
-#The seed root, where files are downloaded to, and can be deleted from after seeding is compelted. (files are copied to the other shares by apps.)
-default[:depot][:downloads_path] = "#{node[:depot][:local_mount_root]}/downloads"
-default[:depot][:blackhole_path] = "#{node[:depot][:local_mount_root]}/blackhole"
+
+default[:depot][:storage_mount_root] = '/media/storage' # persistent storage on JBOD disk
+default[:depot][:tmp_mount_root] = '/media/temp' # temp storage for downloading
+
+#the following paths are for tmp storage of files that are being downloaded (processing) and torrent files (blackhole).
+default[:depot][:processing_path] = "#{node[:depot][:tmp_mount_root]}/processing"
+default[:depot][:blackhole_path] = "#{node[:depot][:tmp_mount_root]}/blackhole"
+
+#The seed root, where completed files are copied to, and can be deleted from after seeding is compeleted. (files are copied to the other shares by apps.)
+default[:depot][:downloads_path] = "#{node[:depot][:storage_mount_root]}/downloads"
+
 #special folders that map from the blackhole directory to the downloads folder
 default[:depot][:mapped_folders] = {
-    'tvshows' => {
-        :folder_name => '[Tvshows]',
-        :label => 'tvshows'
+    'tvshows' => { # this is the share name (for samba)
+        :folder_name => '[Tvshows]', # this is the folder name
+        :label => 'tvshows' #this is the torent client label
     },
     'movies' =>{
         :folder_name => '[Movies]',
@@ -35,28 +39,6 @@ default[:depot][:mapped_folders] = {
         :label => 'photos'
     }
 }
-default[:depot][:tvshows_path] = "#{node[:depot][:local_mount_root]}/tvshows"
-default[:depot][:movies_path] = "#{node[:depot][:local_mount_root]}/movies"
-default[:depot][:music_path] = "#{node[:depot][:local_mount_root]}/music"
-default[:depot][:ebooks_path] = "#{node[:depot][:local_mount_root]}/ebooks"
-default[:depot][:ebooks_path] = "#{node[:depot][:local_mount_root]}/photos"
-
-default[:depot][:applications] = [
-    'backup_library_config',
-    'btsync',
-    'conky',
-    'couchpotato',
-    'deluge',
-    'headphones',
-    'plex',
-    'smart_monitoring',
-    'sickbeard',
-    'openssh',
-    'openvpn',
-    'popcorn_time',
-    'update_service',
-    'x11vnc'
-]
 
 default[:pushover]= {
     :appid => 'aNiH7or6Q5F1ennDtQpSvhbtY4ot6C', #Depot appID, sends notifications about status of server.
@@ -66,12 +48,6 @@ default[:pushover]= {
 
 ##duckdns configuration
 default[:duckdns][:install_dir] = '/srv/apps/duckdns'
-
-
-##greyhole configuration
-default[:greyhole][:db][:user] = 'greyhole_user'
-default[:greyhole][:db][:password] = '89y63jdwe' #this shouldnt really be tweaked, its set by the greyhole install script.
-default[:greyhole][:db][:name] = 'greyhole'
 
 ##loadbalancer configuration
 default[:load_balancer][:http_listen_port] = '80'
@@ -91,12 +67,11 @@ default[:openvpn][:server][:udp_listen_port] = '60001'
 
 
 ##samba configuraion
-default[:samba][:mount_path] = '/mnt/samba' #cannot be changed manually .. lots of references.
 default[:samba][:workgroup] = 'WORKGROUP'
 default[:samba][:interfaces] = '127.0.0.0/8 eth0'
 default[:samba][:shares] = {
     'blackhole' => {
-        'path' => '/var/share/blackhole',
+        'path' => "#{node[:depot][:blackhole_path]}",
         'create mask' => '0770',
         'directory mask' => '0770',
         'read only' => 'no',
@@ -105,14 +80,12 @@ default[:samba][:shares] = {
         'writable' => 'yes',
         'guest ok' => 'no',
         'printable' => 'no',
-        'dfree command' => '/usr/bin/greyhole-dfree',
-        'vfs objects' => 'greyhole',
         'force user' => "#{node[:depot][:user]}",
         'force create mode' => '0770',
         'force directory mode' => '0770'
     },
     'processing' => {
-        'path' => '/var/share/downloads/processing',
+        'path' => "#{node[:depot][:processing_path]}",
         'create mask' => '0770',
         'directory mask' => '0770',
         'read only' => 'no',
@@ -121,14 +94,12 @@ default[:samba][:shares] = {
         'writable' => 'yes',
         'guest ok' => 'no',
         'printable' => 'no',
-        # "dfree command" => "/usr/bin/greyhole-dfree", #this share should not be a greyhole share
-        # "vfs objects" => "greyhole",
         'force user' => "#{node[:depot][:user]}",
         'force create mode' => '0770',
         'force directory mode' => '0770'
     },
     'downloads' => {
-        'path' => '/var/share/downloads/completed',
+        'path' => "#{node[:depot][:downloads_path]}",
         'create mask' => '0770',
         'directory mask' => '0770',
         'read only' => 'no',
@@ -137,93 +108,30 @@ default[:samba][:shares] = {
         'writable' => 'yes',
         'guest ok' => 'no',
         'printable' => 'no',
-        'dfree command' => '/usr/bin/greyhole-dfree',
-        'vfs objects' => 'greyhole',
-        'force user' => "#{node[:depot][:user]}",
-        'force create mode' => '0770',
-        'force directory mode' => '0770'
-    },
-    'tvshows' => {
-        'path' => '/var/share/media/tvshows',
-        'create mask' => '0770',
-        'directory mask' => '0770',
-        'read only' => 'no',
-        'available' => 'yes',
-        'browseable' => 'yes',
-        'writable' => 'yes',
-        'guest ok' => 'no',
-        'printable' => 'no',
-        'dfree command' => '/usr/bin/greyhole-dfree',
-        'vfs objects' => 'greyhole',
-        'force user' => "#{node[:depot][:user]}",
-        'force create mode' => '0770',
-        'force directory mode' => '0770'
-    },
-    'movies' => {
-        'path' => '/var/share/media/movies',
-        'create mask' => '0770',
-        'directory mask' => '0770',
-        'read only' => 'no',
-        'available' => 'yes',
-        'browseable' => 'yes',
-        'writable' => 'yes',
-        'guest ok' => 'no',
-        'printable' => 'no',
-        'dfree command' => '/usr/bin/greyhole-dfree',
-        'vfs objects' => 'greyhole',
-        'force user' => "#{node[:depot][:user]}",
-        'force create mode' => '0770',
-        'force directory mode' => '0770'
-    },
-    'music' => {
-        'path' => '/var/share/media/music',
-        'create mask' => '0770',
-        'directory mask' => '0770',
-        'read only' => 'no',
-        'available' => 'yes',
-        'browseable' => 'yes',
-        'writable' => 'yes',
-        'guest ok' => 'no',
-        'printable' => 'no',
-        'dfree command' => '/usr/bin/greyhole-dfree',
-        'vfs objects' => 'greyhole',
-        'force user' => "#{node[:depot][:user]}",
-        'force create mode' => '0770',
-        'force directory mode' => '0770'
-    },
-    'ebooks' => {
-        'path' => '/var/share/media/ebooks',
-        'create mask' => '0770',
-        'directory mask' => '0770',
-        'read only' => 'no',
-        'available' => 'yes',
-        'browseable' => 'yes',
-        'writable' => 'yes',
-        'guest ok' => 'no',
-        'printable' => 'no',
-        'dfree command' => '/usr/bin/greyhole-dfree',
-        'vfs objects' => 'greyhole',
-        'force user' => "#{node[:depot][:user]}",
-        'force create mode' => '0770',
-        'force directory mode' => '0770'
-    },
-    'photos' => {
-        'path' => '/var/share/media/photos',
-        'create mask' => '0770',
-        'directory mask' => '0770',
-        'read only' => 'no',
-        'available' => 'yes',
-        'browseable' => 'yes',
-        'writable' => 'yes',
-        'guest ok' => 'no',
-        'printable' => 'no',
-        'dfree command' => '/usr/bin/greyhole-dfree',
-        'vfs objects' => 'greyhole',
         'force user' => "#{node[:depot][:user]}",
         'force create mode' => '0770',
         'force directory mode' => '0770'
     }
 }
+
+node[:depot][:mapped_folders].each { |share_name, mapped_folder|
+
+    default['samba']['shares'][share_name] = {
+        'path' => "#{node[:depot][:storage_mount_root]}/#{mapped_folder[:folder_name]}",
+        'create mask' => '0770',
+        'directory mask' => '0770',
+        'read only' => 'no',
+        'available' => 'yes',
+        'browseable' => 'yes',
+        'writable' => 'yes',
+        'guest ok' => 'no',
+        'printable' => 'no',
+        'force user' => "#{node[:depot][:user]}",
+        'force create mode' => '0770',
+        'force directory mode' => '0770'
+    }
+}
+
 
 default['samba']['hosts_allow'] = '127.0.0.0/8'
 default['samba']['bind_interfaces_only'] = 'no'
@@ -240,7 +148,12 @@ default['samba']['services'] = ['smbd', 'nmbd']
 default['samba']['config'] = '/etc/samba/smb.conf'
 default['samba']['log_dir'] = '/var/log/samba/%m.log'
 
-
+# Smartmontools, S.M.A.R.T disk monitoring
+default['smartmontools']['start_smartd'] = 'yes'
+default['smartmontools']['smartd_opts']  = ''
+default['smartmontools']['devices']      = []
+default['smartmontools']['device_opts']  = '-a -o on -S on -s (S/../.././02|L/../../6/03) -m root -M exec /usr/share/smartmontools/smartd-runner'
+default['smartmontools']['run_d']        = ['pushover']
 
 
 ## Media Library Updater (Push media to gist.)

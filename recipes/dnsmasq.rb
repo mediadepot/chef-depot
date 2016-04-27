@@ -1,4 +1,9 @@
-# package 'dnsmasq'
+#
+# Cookbook Name:: depot
+# Recipe:: dnsmasq
+#
+# Copyright (C) 2015 Jason Kulatunga
+#
 # #https://www.leaseweb.com/labs/2013/08/wildcard-dns-ubuntu-hosts-file-using-dnsmasq/
 # #https://wiki.archlinux.org/index.php/dnsmasq
 # #http://laravel.io/forum/01-19-2016-ubuntu-dnsmasq-wildcard-app-to-1921681010-and-127001-to-dev

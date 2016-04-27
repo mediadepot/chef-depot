@@ -30,15 +30,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # config.vm.box = 'williamyeh/ubuntu-trusty64-docker' #only docker installed
   # config.vm.box = 'tkak/ubuntu-14.04-amd64-chef-dk' #docker1.5 and chef installed
   config.vm.box = 'rudolfochrist/ubuntu-desktop' #no docker, no chef, desktop x64
+  # config.vm.box = 'box-cutter/ubuntu1404-desktop' #no docker, no chef, desktop x64
+  # config.vm.box = 'gbarbieru/xenial' # ubuntu 16.04 server, no docker, no chef, no desktop, x64
+
 
   # Assign this VM to a host-only network IP, allowing you to access it
   # via the IP. Host-only networks can talk to the host machine as well as
   # any other machines on the same network, but cannot be accessed (through this
   # network interface) by any external networks.
   config.vm.network :private_network, type: 'dhcp'
-  config.vm.network "forwarded_port", guest: 50000, host: 5000, auto_correct: true #manager
-  config.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true #load balancer
-  config.vm.network "forwarded_port", guest: 943, host: 943, auto_correct: true #load balancer
+  # config.vm.network "forwarded_port", guest: 50000, host: 5000, auto_correct: true #manager
+  # config.vm.network "forwarded_port", guest: 80, host: 8080, auto_correct: true #load balancer
+  # config.vm.network "forwarded_port", guest: 943, host: 943, auto_correct: true #load balancer
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
@@ -54,12 +57,28 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
+
   config.vm.provider :virtualbox do |vb|
     # Don't boot with headless mode
     vb.gui = true
 
     # Use VBoxManage to customize the VM. For example to change memory:
     vb.customize ["modifyvm", :id, "--memory", "2048"]
+
+    (1..4).each do |i|
+      unless File.exist?("drives/drive_#{i}.vdi")
+        vb.customize ['createhd',
+                      '--filename', "drives/drive_#{i}",
+                      '--format', 'VDI',
+                      '--size', 2* 1024]
+
+      end
+        vb.customize ['storageattach', :id,
+                      '--storagectl', 'SATA',
+                      '--port', i, '--device', 0, '--type', 'hdd', '--medium', "drives/drive_#{i}.vdi"]
+
+    end
+
   end
   #
   # View the documentation for the provider you're using for more
@@ -80,6 +99,44 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # to skip installing and copying to Vagrant's shelf.
   # config.berkshelf.except = []
 
+  # This cookbook expects the disks to be formatted.
+  # The cookbook will mount partitions
+  config.vm.provision "shell", inline: <<-EOF
+        # fix sources to use us servers insead of de.
+        sed -i 's|http://de.|http://us.|g' /etc/apt/sources.list
+
+        # for some reason the tmp folder permissions get screwed up.
+        chmod 1777 /tmp
+
+        # apt-get install -y gdisk
+        if [ ! -b /dev/sdb1 ]
+        then
+          sgdisk -n 0:0:0 -t 0:8300 /dev/sdb
+          sleep 1
+          mkfs.ext4 -F /dev/sdb1
+        fi
+
+        if [ ! -b /dev/sdc1 ]
+        then
+          sgdisk -n 0:0:0 -t 0:8300 /dev/sdc
+          sleep 1
+          mkfs.ext4 -F /dev/sdc1
+        fi
+
+        if [ ! -b /dev/sdd1 ]
+        then
+          sgdisk -n 0:0:0 -t 0:8300 /dev/sdd
+          sleep 1
+          mkfs.ext4 -F /dev/sdd1
+        fi
+
+        if [ ! -b /dev/sde1 ]
+        then
+          sgdisk -n 0:0:0 -t 0:8300 /dev/sde
+          sleep 1
+          mkfs.ext4 -F /dev/sde1
+        fi
+  EOF
   config.vm.provision 'chef_zero' do |chef|
     # Specify the local paths where Chef data is stored
     # chef.cookbooks_path = "cookbooks"
@@ -90,11 +147,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     chef.add_recipe 'depot'
     chef.json = {
         'vagrant' => {
-            'install_desktop' => true
-        },
-        'greyhole' => {
-            'allow_multiple_sp_per_device' => true #for testing, all greyhole drives are on the same physical drive
-        },
+            'install_desktop' => false
+        }
         # 'load_balancer' => {
         #     'listen_port' => '8080' #for testing with a vagrant box, override the listen port so we can test with hostfile changes
         # }

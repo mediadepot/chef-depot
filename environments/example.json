@@ -28,15 +28,33 @@
       "id":""
 
     },
-    "greyhole":{
-      "_comment":"before adding drives here, make sure they have been correctly added to fstab and formatted correctly.",
-      "mounted_drives":[
-        "/media/drive1",
-        "/media/drive2",
-        "/media/drive3",
-        "/media/drive4",
-        "/media/drive5",
-        "/media/drive6"
+    "mount":{
+      "drives":[
+        {
+          "mount_point": "/mnt/drive1",
+          "device": "/dev/sdb1",
+          "device_type": "device",
+          "fstype": "ext4"
+
+        },{
+          "mount_point": "/mnt/drive2",
+          "device": "/dev/sdc1",
+          "device_type": "device",
+          "fstype": "ext4"
+
+        },{
+          "mount_point": "/mnt/drive3",
+          "device": "/dev/sdd1",
+          "device_type": "device",
+          "fstype": "ext4"
+
+        },{
+          "mount_point": "/mnt/drive4",
+          "device": "/dev/sde1",
+          "device_type": "device",
+          "fstype": "ext4"
+
+        }
       ]
     },
     "pushover":{
@@ -50,40 +68,19 @@
     "backup_library_config":{
       "enabled": true
     },
-    "btsync":{
-      "enabled": false
-    },
     "conky":{
-      "enabled": true
-    },
-    "couchpotato":{
-      "enabled": true
-    },
-    "deluge":{
-      "enabled": true
-    },
-    "headphones":{
-      "enabled": true
-    },
-    "plex":{
       "enabled": true
     },
     "smart_monitoring":{
       "enabled": true
     },
-    "sickbeard":{
+    "samba":{
       "enabled": true
     },
     "openssh":{
       "enabled": true
     },
     "openvpn":{
-      "enabled": true
-    },
-    "popcorn_time":{
-      "enabled": true
-    },
-    "update_service":{
       "enabled": true
     },
     "x11vnc":{
