@@ -23,7 +23,7 @@ This assumes you're using a chef server to manage your environment configuration
     validation_key           "#{current_dir}/mediadepot-validator.pem"
     chef_server_url          "https://api.chef.io/organizations/mediadepot"
     cookbook_path            ["#{current_dir}/../cookbooks"]
-	environment				 "hoard"
+	environment				 "example"
 	
 	# Download the mediadepot-validator.pem from the Hosted Chef
 	chef-client --override-runlist "chef-depot::default" --config "/etc/chef/config.rb"
