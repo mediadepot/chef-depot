@@ -31,6 +31,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # config.vm.box = 'tkak/ubuntu-14.04-amd64-chef-dk' #docker1.5 and chef installed
   config.vm.box = 'rudolfochrist/ubuntu-desktop' #no docker, no chef, desktop x64
   # config.vm.box = 'box-cutter/ubuntu1404-desktop' #no docker, no chef, desktop x64
+  # config.vm.box = 'gbarbieru/xenial' # ubuntu 16.04 server, no docker, no chef, no desktop, x64
+
 
   # Assign this VM to a host-only network IP, allowing you to access it
   # via the IP. Host-only networks can talk to the host machine as well as
@@ -72,7 +74,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       end
         vb.customize ['storageattach', :id,
-                      '--storagectl', 'SATA Controller',
+                      '--storagectl', 'SATA',
                       '--port', i, '--device', 0, '--type', 'hdd', '--medium', "drives/drive_#{i}.vdi"]
 
     end
@@ -145,7 +147,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     chef.add_recipe 'depot'
     chef.json = {
         'vagrant' => {
-            'install_desktop' => true
+            'install_desktop' => false
         }
         # 'load_balancer' => {
         #     'listen_port' => '8080' #for testing with a vagrant box, override the listen port so we can test with hostfile changes

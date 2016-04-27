@@ -1,47 +1,32 @@
 # chef-depot-cookbook
 
-TODO: Enter the cookbook description here.
+## Setup:
+This assumes you're using a chef server to manage your environment configuration.
 
-## Supported Platforms
-
-TODO: List your supported platforms.
-
-## Attributes
-
-<table>
-  <tr>
-    <th>Key</th>
-    <th>Type</th>
-    <th>Description</th>
-    <th>Default</th>
-  </tr>
-  <tr>
-    <td><tt>['chef-depot']['bacon']</tt></td>
-    <td>Boolean</td>
-    <td>whether to include bacon</td>
-    <td><tt>true</tt></td>
-  </tr>
-</table>
-
-## Usage
-
-### chef-depot::default
-
-Include `chef-depot` in your node's `run_list`:
-
-```json
-{
-  "run_list": [
-    "recipe[chef-depot::default]"
-  ]
-}
-```
-
-## License and Authors
-
-Author:: YOUR_NAME (<YOUR_EMAIL>)
-
-
+	# Install ChefDK on the vanilla Ubuntu installation
+	cd /tmp && curl -LO https://packages.chef.io/stable/ubuntu/12.04/chefdk_0.13.21-1_amd64.deb
+	rpm -i /tmp/chefdk_0.13.21-1_amd64.deb
+	
+	# Create configuration folders
+	mkdir -p /etc/chef /var/chef
+	
+	# Download the knife.rb file from Hosted Chef (or recreate it)
+	# NOTE: make sure to specify the environment 
+	nano /etc/chef/config.rb
+	
+	current_dir = File.dirname(__FILE__)
+    log_level                :info
+    log_location             STDOUT
+    node_name                "analogj"
+    client_key               "#{current_dir}/analogj.pem"
+    validation_client_name   "mediadepot-validator"
+    validation_key           "#{current_dir}/mediadepot-validator.pem"
+    chef_server_url          "https://api.chef.io/organizations/mediadepot"
+    cookbook_path            ["#{current_dir}/../cookbooks"]
+	environment				 "hoard"
+	
+	# Download the mediadepot-validator.pem from the Hosted Chef
+	chef-client --override-runlist "chef-depot::default" --config "/etc/chef/config.rb"
 
 
 ## Testing/Development

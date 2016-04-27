@@ -99,10 +99,10 @@ if node[:vagrant]
   #   only_if { node[:vagrant][:install_desktop] } #most vagrant base boxes dont have the desktop packages installed, so impossible to test VNC.
   #   notifies :run, 'execute[start-desktop-env]'
   # end
-  execute 'set permissions on tmp flder' do
-    command 'chmod 1777 /tmp'
-    action :run
-  end
+  # execute 'set permissions on tmp flder' do
+  #   command 'chmod 1777 /tmp'
+  #   action :run
+  # end
 
 end
 
