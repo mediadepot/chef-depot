@@ -169,7 +169,7 @@ include_recipe 'depot::dnsmasq'
 
 #base applications, installed alphabetically
 if node[:conky][:enabled]
-  #include_recipe 'depot::conky'
+  include_recipe 'depot::conky'
 end
 if node[:openssh][:enabled]
   include_recipe 'depot::openssh'
