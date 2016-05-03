@@ -19,23 +19,23 @@ default[:depot][:downloads_path] = "#{node[:depot][:storage_mount_root]}/downloa
 #special folders that map from the blackhole directory to the downloads folder
 default[:depot][:mapped_folders] = {
     'tvshows' => { # this is the share name (for samba)
-        :folder_name => '[Tvshows]', # this is the folder name
+        :folder_name => 'tvshows', # this is the folder name
         :label => 'tvshows' #this is the torent client label
     },
     'movies' =>{
-        :folder_name => '[Movies]',
+        :folder_name => 'movies',
         :label => 'movies'
     },
     'music' => {
-        :folder_name => '[Music]',
+        :folder_name => 'music',
         :label => 'music'
     },
     'ebooks' => {
-        :folder_name => '[Ebooks]',
+        :folder_name => 'ebooks',
         :label => 'ebooks'
     },
     'photos' => {
-        :folder_name => '[Photos]',
+        :folder_name => 'photos',
         :label => 'photos'
     }
 }
