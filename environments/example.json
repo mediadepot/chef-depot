@@ -78,7 +78,10 @@
       "enabled": true
     },
     "openssh":{
-      "enabled": true
+      "enabled": true,
+      "authorized_keys": [
+        "ssh-rsa AAAAB3NzaC1..."
+      ]
     },
     "openvpn":{
       "enabled": true

@@ -16,29 +16,14 @@ default[:depot][:blackhole_path] = "#{node[:depot][:tmp_mount_root]}/blackhole"
 #The seed root, where completed files are copied to, and can be deleted from after seeding is compeleted. (files are copied to the other shares by apps.)
 default[:depot][:downloads_path] = "#{node[:depot][:storage_mount_root]}/downloads"
 
-#special folders that map from the blackhole directory to the downloads folder
-default[:depot][:mapped_folders] = {
-    'tvshows' => { # this is the share name (for samba)
-        :folder_name => 'tvshows', # this is the folder name
-        :label => 'tvshows' #this is the torent client label
-    },
-    'movies' =>{
-        :folder_name => 'movies',
-        :label => 'movies'
-    },
-    'music' => {
-        :folder_name => 'music',
-        :label => 'music'
-    },
-    'ebooks' => {
-        :folder_name => 'ebooks',
-        :label => 'ebooks'
-    },
-    'photos' => {
-        :folder_name => 'photos',
-        :label => 'photos'
-    }
-}
+#special folders that are created in the blackhole directory and the downloads folder, and also used as the share name for Samba
+default[:depot][:mapped_folders] = [
+    'tvshows',
+    'movies',
+    'music',
+    'ebooks',
+    'photos'
+]
 
 default[:pushover]= {
     :appid => 'aNiH7or6Q5F1ennDtQpSvhbtY4ot6C', #Depot appID, sends notifications about status of server.
@@ -58,6 +43,7 @@ default[:manager][:listen_port] = '50000'
 
 ##sshd configuration
 default[:openssh][:server][:password_authentication] = 'no'
+default[:openssh][:authorized_keys] = []
 
 ##OpenVPN Access Server configuration
 default[:openvpn][:webui][:login] = "#{node[:depot][:user]}"
@@ -114,10 +100,10 @@ default[:samba][:shares] = {
     }
 }
 
-node[:depot][:mapped_folders].each { |share_name, mapped_folder|
+node[:depot][:mapped_folders].each { |share_name|
 
     default['samba']['shares'][share_name] = {
-        'path' => "#{node[:depot][:storage_mount_root]}/#{mapped_folder[:folder_name]}",
+        'path' => "#{node[:depot][:storage_mount_root]}/#{share_name}",
         'create mask' => '0770',
         'directory mask' => '0770',
         'read only' => 'no',

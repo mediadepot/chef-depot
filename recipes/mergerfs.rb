@@ -56,21 +56,29 @@ mount node[:depot][:storage_mount_root] do
 end
 
 #create the folder structure inside the storage drive
-node[:depot][:mapped_folders].each { |share_name, mapped_folder|
-  directory "#{node[:depot][:storage_mount_root]}/#{mapped_folder[:folder_name]}"  do
+node[:depot][:mapped_folders].each { |folder_name|
+  directory "#{node[:depot][:storage_mount_root]}/#{folder_name}"  do
     owner node[:depot][:user]
     group 'users'
-    not_if do ::File.directory?("#{node[:depot][:storage_mount_root]}/#{mapped_folder[:folder_name]}") end
+    not_if do ::File.directory?("#{node[:depot][:storage_mount_root]}/#{folder_name}") end
   end
 
   #add special folders to downloads. Torrents added to the blackhole folder will be saved to the
   #associated downloads folder after completed.
-  directory "#{node[:depot][:downloads_path]}/#{mapped_folder[:folder_name]}" do
+  directory "#{node[:depot][:downloads_path]}/#{folder_name}" do
     recursive true
     owner node[:depot][:user]
     group 'users'
   end
 }
+
+cookbook_file "#{node[:depot][:storage_mount_root]}/README.md" do
+  source 'media_storage_README.md'
+  owner node[:depot][:user]
+  group 'users'
+  mode '0755'
+  action :create
+end
 
 #verify permissions on storage folder and sub directories
 execute "chown-#{node[:depot][:storage_mount_root]}" do

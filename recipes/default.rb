@@ -146,11 +146,18 @@ directory node[:depot][:blackhole_path] do
   recursive true
   not_if do ::File.directory?(node[:depot][:blackhole_path]) end
 end
+cookbook_file "#{node[:depot][:tmp_mount_root]}/README.md" do
+  source 'media_temp_README.md'
+  owner node[:depot][:user]
+  group 'users'
+  mode '0755'
+  action :create
+end
 
 #add special folders to blackhole. Torrents added to the blackhole folder will be saved to the
 #associated downloads folder after completed.
-node[:depot][:mapped_folders].each_pair do |key,value|
-  directory "#{node[:depot][:blackhole_path]}/#{value[:folder_name]}" do
+node[:depot][:mapped_folders].each do |folder_name|
+  directory "#{node[:depot][:blackhole_path]}/#{folder_name}" do
     recursive true
     owner node[:depot][:user]
     group 'users'
