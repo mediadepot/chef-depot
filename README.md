@@ -5,7 +5,7 @@ This assumes you're using a chef server to manage your environment configuration
 
 	# Install ChefDK on the vanilla Ubuntu installation
 	cd /tmp && curl -LO https://packages.chef.io/stable/ubuntu/12.04/chefdk_0.13.21-1_amd64.deb
-	rpm -i /tmp/chefdk_0.13.21-1_amd64.deb
+	dpkg -i /tmp/chefdk_0.13.21-1_amd64.deb
 	
 	# Create configuration folders
 	mkdir -p /etc/chef /var/chef
@@ -17,8 +17,8 @@ This assumes you're using a chef server to manage your environment configuration
 	current_dir = File.dirname(__FILE__)
     log_level                :info
     log_location             STDOUT
-    node_name                "analogj"
-    client_key               "#{current_dir}/analogj.pem"
+    node_name                "depot"
+    client_key               "#{current_dir}/depot.pem"
     validation_client_name   "mediadepot-validator"
     validation_key           "#{current_dir}/mediadepot-validator.pem"
     chef_server_url          "https://api.chef.io/organizations/mediadepot"
