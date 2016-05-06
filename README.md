@@ -26,7 +26,7 @@ This assumes you're using a chef server to manage your environment configuration
 	environment				 "example"
 	
 	# Download the mediadepot-validator.pem from the Hosted Chef
-	chef-client --override-runlist "chef-depot::default" --config "/etc/chef/config.rb"
+	chef-client --override-runlist "depot::default" --config "/etc/chef/config.rb"
 
 
 ## Testing/Development
