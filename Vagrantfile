@@ -151,9 +151,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         },
         'smart_monitoring' => {
             'enabled' => false
-        },
-        'conky' => {
-            'enabled' => false
         }
         # 'load_balancer' => {
         #     'listen_port' => '8080' #for testing with a vagrant box, override the listen port so we can test with hostfile changes
