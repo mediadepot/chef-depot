@@ -10,6 +10,7 @@ script
 # -create = First try to find the user's display using FINDDISPLAY if that doesn't succeed create an X session via the FINDCREATEDISPLAY method.
 # -forever = means even if you disconnect from your session, x11vnc will still be alive
 # -o = Write stderr messages to file "logfile" instead of to the terminal.
+# -noxdamage = Do not use the X DAMAGE extension to detect framebuffer changes even if it is available. seems to be broken in some distros
 # -repeat = is allowing keyboard repeating keys (most annoying thing when it doesn’t work)
 # -reopen = If the X server connection is disconnected, try to reopen the X display (up to one time.)
 # -rfbauth = use authentication on RFB protocol
@@ -21,6 +22,7 @@ script
 -display :0 \
 -forever \
 -o /var/log/x11vnc.log \
+-noxdamage \
 -repeat \
 -rfbauth /etc/x11vnc.pass \
 -rfbport 5900 \

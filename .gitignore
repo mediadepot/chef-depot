@@ -19,3 +19,7 @@ bin/*
 
 .kitchen/
 .kitchen.local.yml
+
+nodes/
+roles/
+data_bags/

@@ -19,7 +19,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #   $ vagrant plugin install vagrant-omnibus
   #
   if Vagrant.has_plugin?("vagrant-omnibus")
-    config.omnibus.chef_version = '12.5.1'
+    config.omnibus.chef_version = 'latest'
   end
 
   # Every Vagrant virtual environment requires a box to build off of.
@@ -139,9 +139,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   EOF
   config.vm.provision 'chef_zero' do |chef|
     # Specify the local paths where Chef data is stored
-    # chef.cookbooks_path = "cookbooks"
     chef.environments_path = 'environments'
     chef.environment = 'example'
+    # chef.nodes_path = 'nodes'
+    # chef.data_bags_path = 'data_bags'
+    # chef.roles_path = 'roles'
+    # chef.cookbooks_path = 'cookbooks'
+
 
     # Add a recipe
     chef.add_recipe 'depot'
