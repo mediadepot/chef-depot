@@ -1,0 +1,32 @@
+#
+# Warning!!
+#  Any local changes may be overwritten. File is managed by Opscode Chef.
+#
+# http://www.dickson.me.uk/2012/03/26/setting-up-dnsmasq-with-ubuntu-10-04-for-home-networking/
+# Configuration file for dnsmasq.
+#
+# Format is one option per line, legal options are the same
+# as the long options legal on the command line. See
+# &quot;/usr/sbin/dnsmasq --help&quot; or &quot;man 8 dnsmasq&quot; for details.
+
+# The following two options make you a better netizen, since they
+# tell dnsmasq to filter out queries which the public DNS cannot
+# answer, and which load the servers (especially the root servers)
+# uneccessarily. If you have a dial-on-demand link they also stop
+# these requests from bringing up the link uneccessarily.
+
+# Never forward plain names (without a dot or domain part)
+domain-needed
+# Never forward addresses in the non-routed address spaces.
+bogus-priv
+
+# Add local-only domains here, queries in these domains are answered
+# from /etc/hosts or DHCP only.
+local=/<%=@depot[:internal_domain]%>/
+
+# you can specify which adddress to listen to (remember to include 127.0.0.1 if
+# you use this.)
+listen-address=127.0.0.1
+listen-address=<%= node['ipaddress'] %>
+
+address=/<%=@depot[:internal_domain]%>/<%= node['ipaddress'] %>
