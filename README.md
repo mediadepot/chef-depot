@@ -1,5 +1,9 @@
 # chef-depot-cookbook
 
+## Screenshots:
+[Gallery](https://imgur.com/gallery/fSnwT)
+
+
 ## Setup:
 This assumes you're using a chef server to manage your environment configuration.
 
