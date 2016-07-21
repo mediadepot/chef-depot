@@ -1,7 +1,7 @@
 name             'depot'
 maintainer       'Jason Kulatunga'
 maintainer_email 'jason@thesparktree.com'
-license          'All rights reserved'
+license          'MIT'
 description      'Installs/Configures chef-depot'
 long_description 'Installs/Configures chef-depot'
 version          '0.1.0'
