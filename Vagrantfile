@@ -1,6 +1,15 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+if ARGV[0] == 'destroy'
+  puts 'Destroying all nodes/*.json files'
+  Dir.glob(Dir.pwd + '/nodes/*.json').each { |file|
+    puts 'deleting: ' + file
+    File.delete(file)
+  }
+end
+
+
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = '2'
 
@@ -19,8 +28,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #   $ vagrant plugin install vagrant-omnibus
   #
   if Vagrant.has_plugin?("vagrant-omnibus")
-    config.omnibus.chef_version = 'latest'
+    config.omnibus.chef_version = '12.21.14'
   end
+  config.ssh.insert_key = false;
 
   # Every Vagrant virtual environment requires a box to build off of.
   # If this value is a shorthand to a box in Vagrant Cloud then
@@ -29,9 +39,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # config.vm.box = 'phusion/ubuntu-14.04-amd64' #only docker installed
   # config.vm.box = 'williamyeh/ubuntu-trusty64-docker' #only docker installed
   # config.vm.box = 'tkak/ubuntu-14.04-amd64-chef-dk' #docker1.5 and chef installed
-  config.vm.box = 'rudolfochrist/ubuntu-desktop' #no docker, no chef, desktop x64
-  # config.vm.box = 'box-cutter/ubuntu1404-desktop' #no docker, no chef, desktop x64
+  # config.vm.box = 'rudolfochrist/ubuntu-desktop' #no docker, no chef, desktop x64, "SATA"
+  config.vm.box = 'box-cutter/ubuntu1404-desktop' #no docker, no chef, desktop x64, "SATA Controller"
   # config.vm.box = 'gbarbieru/xenial' # ubuntu 16.04 server, no docker, no chef, no desktop, x64
+  # config.vm.box = 'janihur/ubuntu-1404-desktop' # ubuntu 14.04 desktop, no docker, no chef, no desktop, x64, "SATA"
 
 
   # Assign this VM to a host-only network IP, allowing you to access it
@@ -74,7 +85,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       end
         vb.customize ['storageattach', :id,
-                      '--storagectl', 'SATA',
+                      # '--storagectl', 'SATA',
+                      '--storagectl', 'SATA Controller',
                       '--port', i, '--device', 0, '--type', 'hdd', '--medium', "drives/drive_#{i}.vdi"]
 
     end
@@ -141,7 +153,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Specify the local paths where Chef data is stored
     chef.environments_path = 'environments'
     chef.environment = 'example'
-    # chef.nodes_path = 'nodes'
+    chef.nodes_path = 'nodes'
     # chef.data_bags_path = 'data_bags'
     # chef.roles_path = 'roles'
     # chef.cookbooks_path = 'cookbooks'

@@ -8,12 +8,12 @@
 #download new version of libfuse and fuse (because otherwise merger has problems)
 
 remote_file "#{Chef::Config[:file_cache_path]}/libfuse2_2.9.4-1ubuntu1_amd64.deb" do
-  source 'http://mirrors.kernel.org/ubuntu/pool/main/f/fuse/libfuse2_2.9.4-1ubuntu1_amd64.deb'
+  source 'http://archive.kernel.org/ubuntu-archive/ubuntu/pool/main/f/fuse/libfuse2_2.9.4-1ubuntu1_amd64.deb'
   mode 0644
 end
 
 remote_file "#{Chef::Config[:file_cache_path]}/fuse_2.9.4-1ubuntu1_amd64.deb" do
-  source 'http://mirrors.kernel.org/ubuntu/pool/main/f/fuse/fuse_2.9.4-1ubuntu1_amd64.deb'
+  source 'http://archive.kernel.org/ubuntu-archive/ubuntu/pool/main/f/fuse/fuse_2.9.4-1ubuntu1_amd64.deb'
   mode 0644
 end
 

@@ -7,8 +7,9 @@
 
 # start the docker service
 
-docker_installation_binary 'default' do
-  version '1.9.0'
+docker_installation_tarball 'default' do
+  source 'https://download.docker.com/linux/static/stable/x86_64/docker-17.06.2-ce.tgz'
+  checksum 'a15f62533e773c40029a61784a5a1c5bc7dd21e0beb5402fda109f80e1f2994d'
 end
 
 docker_service_manager_upstart 'default' do
@@ -18,10 +19,10 @@ end
 
 rancher_manager 'depot_rancher_server' do
   settings({
-    'catalog.url' => 'mediadepot=https://github.com/mediadepot/rancher-catalog.git'
-  })
+    'catalog.url' => "{\"catalogs\":{\"library\":{\"url\":\"https://git.rancher.io/rancher-catalog.git\",\"branch\":\"${RELEASE}\"},\"community\":{\"url\":\"https://git.rancher.io/community-catalog.git\",\"branch\":\"master\"},\"mediadepot\":{\"url\":\"https://github.com/mediadepot/rancher-catalog.git\",\"branch\":\"master\"}}}"
+           })
   port node[:manager][:listen_port]
-  binds ['/etc/profile.d:/etc/profile.d']
+  binds lazy { ['/etc/profile.d:/etc/profile.d', "#{node['manager']['data_dir']}:/var/lib/mysql"]}
 end
 
 rancher_auth_local node['depot']['user'] do
@@ -35,7 +36,7 @@ rancher_agent 'depot_rancher_agent' do
   manager_ipaddress node['ipaddress']
   manager_port node[:manager][:listen_port]
   single_node_mode true
-
+  tag "v1.2.6"
   labels lazy {
     host_labels = [
         "depot.user:#{node[:depot][:user]}",
@@ -79,12 +80,12 @@ git "#{node[:depot][:home_dir]}/rancher-catalog" do
 end
 
 #install rancher-compose cli
-remote_file "#{Chef::Config[:file_cache_path]}/rancher-compose-linux-amd64-v0.7.4.tar.gz" do
-  source 'https://github.com/rancher/rancher-compose/releases/download/v0.7.4/rancher-compose-linux-amd64-v0.7.4.tar.gz'
+remote_file "#{Chef::Config[:file_cache_path]}/rancher-compose-linux-amd64.tar.gz" do
+  source 'https://github.com/rancher/rancher-compose/releases/download/v0.12.5/rancher-compose-linux-amd64-v0.12.5.tar.gz'
   mode 0644
 end
-
-#TODO: we need to standup the docker compose with the env file above.
+#
+# #TODO: we need to standup the docker compose with the env file above.
 #extract rancher-compose and create the utility stack
 bash 'extract rancher-compose and create utility stack' do
   user 'root'
@@ -92,7 +93,7 @@ bash 'extract rancher-compose and create utility stack' do
   code lazy {
 <<-EOH
     . /etc/profile.d/rancher.sh
-    tar xpzf #{Chef::Config[:file_cache_path]}/rancher-compose-linux-amd64-v0.7.4.tar.gz -C /tmp/
+    tar xpzf #{Chef::Config[:file_cache_path]}/rancher-compose-linux-amd64.tar.gz -C /tmp/
     mv /tmp/rancher-compose-*/rancher-compose /usr/local/bin/rancher-compose
     cd #{node[:depot][:home_dir]}/rancher-catalog/templates/utility/0
     #run rancher up on the utility stack

@@ -41,6 +41,7 @@ default[:load_balancer][:https_listen_port] = '443'
 
 ##manager configuration
 default[:manager][:listen_port] = '50000'
+default[:manager][:data_dir] = '/srv/apps/rancher'
 
 ##sshd configuration
 default[:openssh][:server][:password_authentication] = 'no'
