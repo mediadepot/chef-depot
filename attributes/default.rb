@@ -23,7 +23,8 @@ default[:depot][:mapped_folders] = [
     'music',
     'ebooks',
     'photos',
-    'software'
+    'software',
+    'documents'
 ]
 
 default[:pushover]= {
