@@ -1,3 +1,6 @@
+# DEPRECATED - SEE [mediadepot/docs](https://github.com/mediadepot/docs) and [mediadepot/ignition](https://github.com/mediadepot/ignition) for new instructions
+
+
 # chef-depot-cookbook
 
 ## Screenshots:
